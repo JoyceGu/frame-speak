@@ -1,0 +1,10 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "frame-speak-mcp",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-09-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true },
+  // Global cap on MCP calls: 300 per minute (per Cloudflare location). Raise if real usage needs it.
+  "ratelimits": [{ "name": "MCP_LIMIT", "namespace_id": "1001", "simple": { "limit": 300, "period": 60 } }]
+}

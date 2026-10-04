@@ -1,0 +1,22 @@
+{
+  "name": "frame-speak-mcp",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "data": "node scripts/extract-data.mjs",
+    "build:view": "node scripts/build-view.mjs",
+    "build": "npm run data && npm run build:view",
+    "dev": "npm run build && wrangler dev",
+    "deploy": "npm run build && wrangler deploy",
+    "test": "npm run build && node scripts/smoke.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/ext-apps": "^2.0.3",
+    "@modelcontextprotocol/server": "^2.3.0",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "wrangler": "^4.147.0"
+  }
+}

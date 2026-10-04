@@ -1,0 +1,8 @@
+.DS_Store
+demo-video/
+node_modules/
+mcp/dist/
+mcp/.wrangler/
+mcp/.claude/
+mcp/src/generated/
+mcp/src/shared/data.js

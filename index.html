@@ -1,0 +1,1350 @@
+<title>Frame &amp; Speak</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Noto+Sans+SC:wght@400;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+:root{
+  --bg:#E9EDEA; --surface:#FFFFFF; --surface-2:#F4F6F4; --ink:#15302A; --muted:#5A6D67; --line:#D3DBD7;
+  --accent:#3346D3; --accent-ink:#FFFFFF; --accent-soft:#E3E6FB;
+  --marker:#F6DD55; --marker-ink:#2A2503;
+  --link:#D2462E; --stress-bg:#E3E6FB;
+  --good:#1F7A4D; --bad:#B3261E;
+  --display:"Bricolage Grotesque", "Noto Sans SC", "Avenir Next", system-ui, sans-serif;
+  --body:"Atkinson Hyperlegible", "Noto Sans SC", "PingFang SC", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0F1513; --surface:#172019; --surface-2:#1C2622; --ink:#E4ECE8; --muted:#94A7A0; --line:#2A3833;
+    --accent:#8E9CFF; --accent-ink:#0D1030; --accent-soft:#232A55;
+    --marker:#8A7A1C; --marker-ink:#FFF7C8;
+    --link:#FF8F6B; --stress-bg:#2A3263;
+    --good:#5CC98F; --bad:#FF8A80;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0F1513; --surface:#172019; --surface-2:#1C2622; --ink:#E4ECE8; --muted:#94A7A0; --line:#2A3833;
+  --accent:#8E9CFF; --accent-ink:#0D1030; --accent-soft:#232A55;
+  --marker:#8A7A1C; --marker-ink:#FFF7C8;
+  --link:#FF8F6B; --stress-bg:#2A3263;
+  --good:#5CC98F; --bad:#FF8A80;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;padding-inline:16px;padding-block:0 64px}
+.wrap{max-width:820px;margin:0 auto}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.2}
+.label{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:20px 12px}
+.brand{display:flex;align-items:baseline;gap:10px}
+.brand h1{font-size:26px;font-weight:800;letter-spacing:-.01em}
+.brand h1 span{background:var(--marker);color:var(--marker-ink);padding:0 4px;border-radius:3px}
+.brand small{color:var(--muted);font-size:14px}
+.seg{display:inline-flex;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px}
+.seg button{border:0;background:transparent;padding:6px 16px;border-radius:999px;font-size:14px;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);font-weight:700}
+.seg.sm button{padding:3px 10px;font-size:12px}
+
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-block:8px 18px}
+.mode{border:1.5px solid var(--line);background:var(--surface);border-radius:var(--r);padding:14px 16px;text-align:left;display:grid;gap:2px}
+.mode b{font-family:var(--display);font-size:18px}
+.mode small{color:var(--muted);font-size:13px}
+.mode[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+.stack{display:grid;gap:16px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.between{justify-content:space-between}
+.btn{border:1.5px solid var(--ink);background:transparent;border-radius:8px;padding:8px 14px;font-weight:700;font-size:14px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.ghost{border-color:var(--line);font-weight:400}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.chip{border:1px solid var(--line);background:var(--surface-2);border-radius:999px;padding:5px 12px;font-size:13px}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+textarea{width:100%;font:inherit;color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:10px 12px;resize:vertical}
+textarea::placeholder{color:var(--muted)}
+
+.topic{display:grid;gap:10px}
+.topic .q{font-family:var(--display);font-size:clamp(22px,4vw,30px);font-weight:700;letter-spacing:-.01em}
+.topic .ctx{color:var(--muted);font-size:14px}
+.tag{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:4px;background:var(--accent-soft);color:var(--accent)}
+
+.rail{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.rail .node{font-size:12px;padding:4px 9px;border-radius:5px;border:1px solid var(--line);color:var(--muted);background:var(--surface-2)}
+.rail .node.done{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.rail .arrow{color:var(--muted);font-size:12px}
+
+.steps{display:grid;gap:12px}
+.step{border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;background:var(--surface);display:grid;gap:8px}
+.step.active{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.step-head{display:flex;gap:10px;align-items:baseline}
+.step-head .n{font-family:var(--mono);font-size:12px;color:var(--accent)}
+.step-head h3{font-size:18px}
+.step .prompt{font-size:15px;color:var(--muted)}
+.sphr{display:flex;flex-wrap:wrap;gap:6px}
+.sphr span{background:var(--surface-2);border-radius:6px;padding:4px 10px;font-size:13.5px}
+.wc{font-family:var(--mono);font-size:11px;color:var(--muted);text-align:right;min-height:1em}
+.phrases{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}
+.phrase{font-size:14px;padding:8px 10px;border-radius:8px;background:var(--surface-2)}
+.phrase small{display:block;color:var(--muted);font-size:12px}
+
+.status{font-size:14px;color:var(--muted);display:flex;gap:8px;align-items:center}
+.status.err{color:var(--bad)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 1s infinite;flex:none}
+@keyframes pulse{50%{opacity:.25}}
+
+.scores{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.score{background:var(--surface-2);border-radius:8px;padding:10px 12px;display:grid;gap:6px}
+.score .v{font-family:var(--display);font-size:24px;font-weight:700;font-variant-numeric:tabular-nums}
+.score .v small{font-size:13px;color:var(--muted);font-weight:500}
+.bar{height:5px;border-radius:3px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent)}
+.fb-sec{display:grid;gap:8px}
+.fb-sec h3{font-size:17px}
+ul.clean{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.fix{border-left:3px solid var(--line);padding:4px 0 4px 12px;display:grid;gap:3px}
+.fix .old{text-decoration:line-through;text-decoration-color:var(--bad);color:var(--muted)}
+.fix .new{font-weight:700}
+.fix small{color:var(--muted)}
+.polished{background:var(--surface-2);border-radius:8px;padding:14px 16px;line-height:1.75}
+mark{background:var(--marker);color:var(--marker-ink);padding:0 2px;border-radius:2px}
+
+/* read-aloud script */
+.script{display:grid;gap:4px;counter-reset:sent}
+.sent{display:grid;grid-template-columns:32px 1fr;gap:10px;align-items:start;padding:8px 10px;border-radius:8px}
+.sent.playing{background:var(--accent-soft)}
+.sent .play{width:30px;height:30px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font-size:11px;display:grid;place-items:center;padding:0}
+.sent .play:hover{border-color:var(--accent);color:var(--accent)}
+.sent .txt{font-size:18px;line-height:1.9;word-spacing:.08em}
+.lk{color:var(--link);font-weight:700;margin-inline:-.12em;display:inline-block;transform:translateY(.28em);font-size:1.1em;line-height:0}
+.ps{color:var(--muted);margin-inline:.25em;font-weight:400}
+.st{background:var(--stress-bg);border-radius:3px;padding:0 2px;font-weight:700}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.legend span b{font-weight:700}
+
+.vocab{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.word{border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:grid;gap:4px;align-content:start}
+.word .w{font-family:var(--display);font-weight:700;font-size:17px}
+.word .m{font-size:14px}
+.word .ex{font-size:13px;font-style:italic;color:var(--muted)}
+.word .acts{display:flex;gap:12px}
+.word .acts button{border:0;background:transparent;color:var(--accent);font-size:13px;padding:0;font-weight:700}
+.word .acts button:disabled{color:var(--muted);cursor:default}
+
+details.box{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 18px}
+details.box summary{cursor:pointer;font-family:var(--display);font-weight:700;font-size:17px;list-style:none;display:flex;justify-content:space-between;gap:10px}
+details.box summary::-webkit-details-marker{display:none}
+details.box[open] summary{margin-bottom:12px}
+.nb-item{display:grid;grid-template-columns:1fr auto;gap:4px 10px;padding-block:8px;border-top:1px solid var(--line)}
+.nb-item:first-child{border-top:0}
+.nb-item .x{border:0;background:transparent;color:var(--muted);font-size:13px}
+.hist{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:baseline;padding-block:6px;border-top:1px solid var(--line);font-size:14px}
+.hist:first-child{border-top:0}
+.hist .d{font-family:var(--mono);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.note{font-size:13px;color:var(--muted)}
+
+/* charts: categorical slots 1-3 from the validated reference palette */
+:root{--s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#eda100;--s5:#e87ba4}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181}}
+:root[data-theme="dark"]{--s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181}
+.typepick{display:grid;gap:8px;border-top:1px solid var(--line);padding-top:14px}
+.types{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:8px}
+.tchip{border:1px solid var(--line);background:var(--surface-2);border-radius:8px;padding:8px 10px;text-align:left;display:grid;gap:1px}
+.tchip b{font-size:14px}
+.tchip small{font-size:11.5px;color:var(--muted)}
+.tchip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.tchip[aria-pressed="true"] small{color:var(--bg);opacity:.75}
+.ctype{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);flex-basis:100%}
+.ctitle{flex:1 1 auto}
+.cbig{fill:var(--ink);font-size:26px;font-weight:700;font-family:var(--display)}
+.dwrap{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.dwrap svg.donut{width:220px;max-width:100%;flex:none}
+.dlist{list-style:none;margin:0;padding:0;display:grid;gap:8px;flex:1 1 200px}
+.dlist li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:4px;font-size:14px;border-bottom:1px solid var(--line);padding-bottom:6px}
+.dlist b{font-variant-numeric:tabular-nums}
+.lbl{fill:var(--ink)!important;font-weight:700!important}
+.ctip-read{margin:0;font-size:14px;background:var(--surface-2);border-radius:8px;padding:10px 12px}
+.chart{margin:0;display:grid;gap:10px;border-top:1px solid var(--line);padding-top:14px}
+.chead{display:flex;gap:6px 12px;flex-wrap:wrap;align-items:baseline}
+.chead .legend{margin-left:auto}
+.sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.cbox{position:relative}
+.cbox svg{display:block;width:100%;height:auto;overflow:visible}
+.cgrid{stroke:var(--line);stroke-width:1}
+.cax{stroke:var(--muted);stroke-width:1}
+.ctick{fill:var(--muted);font-size:12px;font-family:var(--body);font-variant-numeric:tabular-nums}
+.cl{fill:var(--ink);font-size:14px;font-family:var(--body)}
+.cv{fill:var(--ink);font-size:13px;font-weight:700;font-family:var(--body);font-variant-numeric:tabular-nums}
+.cv.sm{font-size:11px;font-weight:400;fill:var(--muted)}
+.cann{fill:var(--muted);font-size:12px;font-family:var(--body)}
+.cmark,.cref{stroke:var(--muted);stroke-width:1;stroke-dasharray:4 4}
+.ccross{stroke:var(--muted);stroke-width:1}
+.ctip{position:absolute;pointer-events:none;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:6px 10px;font-size:13px;box-shadow:0 4px 14px rgba(0,0,0,.12);min-width:120px;display:grid;gap:2px}
+.ctip .tt{color:var(--muted);font-size:12px}
+.cdata summary{cursor:pointer;font-size:13px;color:var(--accent);font-weight:700}
+.tscroll{overflow-x:auto;margin-top:8px}
+.ctable{border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+.ctable th,.ctable td{padding:4px 12px 4px 0;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+.ctable th:first-child,.ctable td:first-child{text-align:left}
+
+@media (max-width:560px){
+  .modes{grid-template-columns:1fr}
+  .scores{grid-template-columns:repeat(2,1fr)}
+  .panel{padding:16px}
+  .sent .txt{font-size:17px}
+}
+@media (prefers-reduced-motion:reduce){.dot{animation:none}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <h1>Frame <span>&amp;</span> Speak</h1>
+      <small data-t="tagline"></small>
+    </div>
+    <div class="seg" role="group" aria-label="Section">
+      <button id="langZh" aria-pressed="false">中文</button>
+      <button id="langEn" aria-pressed="true">English</button>
+    </div>
+  </header>
+
+  <div class="modes" role="group">
+    <button class="mode" id="modeDraw" aria-pressed="true"><b data-t="drawTitle"></b><small data-t="drawSub"></small></button>
+    <button class="mode" id="modeFree" aria-pressed="false"><b data-t="freeTitle"></b><small data-t="freeSub"></small></button>
+  </div>
+
+  <main class="stack">
+    <section class="panel stack" id="drawPanel">
+      <div class="row between">
+        <div class="row" role="group">
+          <button class="chip" id="deckLife" aria-pressed="false" data-t="life"></button>
+          <button class="chip" id="deckWork" aria-pressed="true" data-t="work"></button>
+          <button class="chip" id="deckChart" aria-pressed="false" data-t="charts"></button>
+        </div>
+        <div class="row">
+          <button class="btn" id="drawBtn" data-t="drawAnother"></button>
+        </div>
+      </div>
+      <div class="typepick" id="typeRow" hidden>
+        <div class="label" data-t="pickType"></div>
+        <div class="types" id="typeChips" role="group"></div>
+      </div>
+    </section>
+
+    <section class="panel stack" id="freePanel" hidden>
+      <label for="scenario" class="stack" style="gap:6px">
+        <b data-t="describe"></b>
+        <textarea id="scenario" rows="3"></textarea>
+      </label>
+      <div class="row between">
+        <div class="row" id="exampleChips"></div>
+        <button class="btn primary" id="buildBtn" data-t="build"></button>
+      </div>
+      <div class="status" id="buildStatus" hidden></div>
+    </section>
+
+    <section class="panel stack" id="topicPanel">
+      <div class="topic">
+        <div class="row"><span class="tag" id="fwTag"></span><span class="note" id="fwWhy"></span></div>
+        <div class="q" id="topicQ"></div>
+        <div class="ctx" id="topicCtx" hidden></div>
+      </div>
+        <figure class="chart" id="chart" hidden></figure>
+      <div class="rail" id="rail"></div>
+    </section>
+
+    <section class="steps" id="steps"></section>
+
+    <section class="panel stack" id="phrasePanel" hidden>
+      <div class="label" data-t="phrases"></div>
+      <div class="phrases" id="phrases"></div>
+    </section>
+
+    <section class="panel stack">
+      <div class="row between">
+        <div>
+          <b data-t="sayIt"></b>
+          <div class="note" data-t="stuck"></div>
+        </div>
+        <div class="row">
+          <button class="btn ghost" id="clearBtn" data-t="clear"></button>
+          <button class="btn primary" id="feedbackBtn" data-t="getFb"></button>
+        </div>
+      </div>
+      <div class="status" id="fbStatus" hidden></div>
+    </section>
+
+    <section class="panel stack" id="fbPanel" hidden aria-live="polite"></section>
+
+    <details class="box">
+      <summary><span data-t="notebook"></span><span class="label" id="nbCount">0</span></summary>
+      <div id="nbList"></div>
+    </details>
+
+    <details class="box">
+      <summary><span data-t="history"></span><span class="label" id="histCount">0</span></summary>
+      <div id="histList"></div>
+    </details>
+
+    <p class="note" data-t="aiNote"></p>
+  </main>
+</div>
+
+<script>
+/* ---------- copy ---------- */
+const T = {
+  en:{tagline:"Say it with a structure", drawTitle:"Draw a topic", drawSub:"Life or work questions with a ready-made framework",
+    freeTitle:"My situation", freeSub:"Describe a real scene and get a guide built for it",
+    life:"Life", work:"Work", charts:"Charts", showData:"Show the numbers", pickType:"Chart type", allTypes:"Any type", drawAnother:"Draw another",
+    describe:"Describe the situation you're about to face", scenarioPh:"e.g. Next week I'm asking my manager for a raise. Last year I led two big launches…",
+    build:"Build my guide", phrases:"Phrases for this topic", sayIt:"Read it through, then say it out loud once.",
+    stuck:"Stuck on a word? Write it in Chinese and the feedback will give you the English.", clear:"Clear", getFb:"Get feedback",
+    notebook:"Word notebook", history:"Recent practice", aiNote:"Feedback and custom-situation guides are written by Claude on your account. Built-in topics and frameworks work without it.",
+    writingGuide:"Writing your guide… usually 10–30 seconds", reviewing:"Reviewing your answer… usually 15–40 seconds",
+    needScenario:"Describe the situation first, even one line.", needAnswer:"Fill in at least one step first.",
+    feedback:"Feedback", dims:["Structure","Clarity","Vocabulary","Naturalness"], worked:"What worked", better:"Say it better",
+    translations:"Your Chinese, in English", polished:"Model answer", readAloud:"Read-aloud script", playAll:"Play all", stop:"Stop",
+    legend:[["‿","linked sounds, say them as one"],["/","short pause"],["bold","stressed word"]],
+    shadow:"Play a sentence, pause, and repeat it right after. Then play the whole passage and speak along with it.",
+    words:"Words to keep", add:"+ Add to notebook", inNb:"In notebook", listen:"Listen", next:"Next time",
+    nbEmpty:"Words you add from feedback land here.", histEmpty:"Each answer you get feedback on is logged with its scores.", remove:"Remove",
+    speed:"Speed", noVoice:"This browser has no speech voice, so playback is unavailable.",
+    err:{off:"Claude isn't available on this page. Built-in topics still work.",rate:"Too many requests right now. Wait a minute and try again.",
+      sign:"Please sign in to Claude again.",json:"The reply came back in a broken format. Try again.",refused:"Claude declined this one. Try rewording it.",other:"Something went wrong reaching Claude. Try again."}},
+  zh:{tagline:"有框架地说", drawTitle:"抽题", drawSub:"生活 / 工作题库，自带回答框架",
+    freeTitle:"自由场景", freeSub:"描述一个真实场景，生成专属回答向导",
+    life:"生活", work:"工作", charts:"图表", showData:"查看数据", pickType:"图表类型", allTypes:"全部类型", drawAnother:"换一题",
+    describe:"描述你即将面对的场景", scenarioPh:"例：下周要在部门会上汇报项目进展，其中一个模块延期了…",
+    build:"生成向导", phrases:"本题可用表达", sayIt:"写完通读一遍，再完整地说出来。",
+    stuck:"不用追求完美，先把意思写下来，反馈会帮你打磨。", clear:"清空", getFb:"获取反馈",
+    notebook:"好词好句本", history:"练习记录", aiNote:"反馈和自由场景向导由 Claude 生成，计入你的 Claude 用量。内置题库和框架无需调用。",
+    writingGuide:"正在生成向导…通常需要 10–30 秒", reviewing:"正在点评…通常需要 15–40 秒",
+    needScenario:"请先写一句场景描述。", needAnswer:"请至少先写一步。",
+    feedback:"反馈", dims:["结构","清晰","用词","自然"], worked:"做得好的", better:"更好的说法",
+    translations:"夹杂的英文，用中文说", polished:"示范回答", readAloud:"朗读稿", playAll:"全部播放", stop:"停止",
+    legend:[["/","停顿"],["加粗","重音"]],
+    shadow:"逐句播放，暂停后立刻跟读；熟练后播放全文，跟着一起说。",
+    words:"好词好句", add:"+ 加入本子", inNb:"已收藏", listen:"朗读", next:"下次重点",
+    nbEmpty:"从反馈里收藏的词句会出现在这里。", histEmpty:"每次获取反馈都会记录分数。", remove:"删除",
+    speed:"语速", noVoice:"当前浏览器没有语音引擎，无法播放。",
+    err:{off:"此页面无法调用 Claude，内置题库仍可使用。",rate:"请求太频繁，请稍后再试。",sign:"请重新登录 Claude。",
+      json:"返回格式有误，请重试。",refused:"Claude 拒绝了这个请求，请换个说法。",other:"连接出错，请重试。"}}
+};
+
+/* ---------- frameworks ---------- */
+const FRAMEWORKS = {
+  PREP:{en:{name:"PREP",use:"State a view and back it up",steps:[
+      ["Point","What's your answer, in one sentence?",["In my view, ...","I'd say ...","Honestly, I think ..."]],
+      ["Reason","Why do you think so? Give one or two reasons.",["The main reason is that ...","This matters because ...","Part of it is ..."]],
+      ["Example","What specific moment or fact shows it?",["For example, last ...","I saw this when ...","A good case is ..."]],
+      ["Point again","Land it. Restate your view, a little sharper.",["So overall, ...","That's why I believe ...","In short, ..."]]]},
+    zh:{name:"观点·理由·例子·重申",use:"表达观点",steps:[
+      ["观点","一句话说出你的立场",["我的看法是……","说实话，我觉得……","简单来说，我认为……"]],
+      ["理由","为什么？给一两个理由",["主要原因是……","之所以这么说，是因为……","一方面……另一方面……"]],
+      ["例子","举一个具体的例子或事实",["举个例子，上次……","我自己就遇到过……","比如说……"]],
+      ["重申","收尾，再强调一次观点",["所以总的来说，……","这就是为什么我认为……","一句话，……"]]]}},
+  STAR:{en:{name:"STAR",use:"Tell a story about something you did",steps:[
+      ["Situation","Where and when? Set the scene in one or two lines.",["A few months ago, ...","At my last team, ...","We were in the middle of ..."]],
+      ["Task","What was your job or the challenge?",["My job was to ...","The challenge was ...","I was responsible for ..."]],
+      ["Action","What did YOU do? Two or three concrete moves.",["First, I ...","Then I decided to ...","I also made sure ..."]],
+      ["Result","What happened? A number helps. What did you learn?",["As a result, ...","In the end, ...","What I took away was ..."]]]},
+    zh:{name:"STAR 背景·任务·行动·结果",use:"讲经历",steps:[
+      ["背景","时间、地点、当时的情况",["几个月前，……","当时我们团队正在……","那时候……"]],
+      ["任务","你要解决什么问题",["我的任务是……","当时的难点在于……","我主要负责……"]],
+      ["行动","你具体做了什么（多用“我”）",["首先，我……","接着我决定……","同时我还……"]],
+      ["结果","结果如何？最好有数字；学到了什么",["最后，……","结果是……","这件事让我学到……"]]]}},
+  PSB:{en:{name:"Problem · Solution · Benefit",use:"Propose or ask for something",steps:[
+      ["Problem","What's not working, and who does it affect?",["Right now, ...","One thing slowing us down is ...","I've noticed that ..."]],
+      ["Solution","What exactly do you suggest?",["What I'd suggest is ...","One option would be to ...","I'd like to propose ..."]],
+      ["Benefit","What gets better, for them?",["This would help us ...","The upside is ...","It means we could ..."]],
+      ["Next step","What do you want them to say or do now?",["Could we ...?","Would you be open to ...?","If it sounds good, I can ..."]]]},
+    zh:{name:"问题·方案·好处·下一步",use:"提建议 / 提要求",steps:[
+      ["问题","现状的问题是什么，影响到谁",["目前我们遇到的一个问题是……","我注意到……","现在的情况是……"]],
+      ["方案","你具体建议怎么做",["我的建议是……","我们可以考虑……","我想提一个方案：……"]],
+      ["好处","对对方有什么好处",["这样做的好处是……","这能帮我们……","意味着我们可以……"]],
+      ["下一步","你希望对方现在做什么",["您看我们能不能……？","如果您同意，我可以……","下一步我建议……"]]]}},
+  PPF:{en:{name:"Past · Present · Future",use:"Describe a change or introduce yourself",steps:[
+      ["Past","How did it start, or how was it before?",["I started out ...","A few years ago, ...","It used to be ..."]],
+      ["Present","Where are things now?",["These days, ...","Right now I'm ...","Currently, ..."]],
+      ["Future","Where is it heading, or what do you want next?",["Looking ahead, ...","Next, I'd love to ...","My goal is to ..."]]]},
+    zh:{name:"过去·现在·未来",use:"讲变化 / 自我介绍",steps:[
+      ["过去","以前是什么样，怎么开始的",["一开始……","几年前，……","以前……"]],
+      ["现在","现在的状态",["现在……","目前我正在……","这些年下来，……"]],
+      ["未来","接下来想怎样",["接下来，……","我希望……","我的目标是……"]]]}},
+  WSN:{en:{name:"What · So what · Now what",use:"Reflect on an experience",steps:[
+      ["What","What happened, in plain facts?",["So what happened was ...","Basically, ...","It started when ..."]],
+      ["So what","Why does it matter? How did it feel?",["What struck me was ...","It made me realize ...","The reason it matters is ..."]],
+      ["Now what","What will you do differently?",["Next time, I'll ...","From now on, ...","So I'm going to ..."]]]},
+    zh:{name:"事实·意义·行动",use:"复盘 / 反思",steps:[
+      ["事实","客观描述发生了什么",["事情是这样的……","简单说就是……","一开始……"]],
+      ["意义","它意味着什么，你的感受",["让我印象最深的是……","这让我意识到……","这件事之所以重要，是因为……"]],
+      ["行动","之后你会怎么做",["下次我会……","从现在开始，……","所以我打算……"]]]}},
+  DATA:{en:{name:"Takeaway · Numbers · Driver · So what",use:"Report data so people remember one thing",steps:[
+      ["Takeaway","If they remember one sentence, what is it? Lead with the conclusion, not the chart title.",[]],
+      ["Key numbers","Which two or three numbers prove it? Round them and compare (from → to, vs. target, vs. last year).",[]],
+      ["Driver","What's behind the pattern? Point to the spike, dip or gap and explain it.",[]],
+      ["So what","What should the room do or decide because of this?",[]]]},
+    zh:{name:"结论·数据·原因·启示",use:"数据汇报：结论先行",steps:[
+      ["结论","如果大家只记住一句话，是什么？先说结论，不要念图表标题",[]],
+      ["关键数据","用哪两三个数字支撑？取整、做对比（从多少到多少、对比目标、同比）",[]],
+      ["原因","背后是什么在驱动？指出峰值、低谷或差距并解释",[]],
+      ["启示","基于这些，大家应该做什么或决定什么",[]]]}},
+  DESC:{en:{name:"Picture · Detail · Feeling",use:"Describe a place, person or thing",steps:[
+      ["Big picture","What is it, and what's the first thing you'd say about it?",["It's a ...","The first thing you notice is ...","If I had to sum it up, ..."]],
+      ["Details","Two or three details: what you see, hear, taste, do there.",["There's this ...","What I love is ...","You can ..."]],
+      ["Feeling","Why does it matter to you?",["It makes me feel ...","That's why I keep ...","For me, it's ..."]]]},
+    zh:{name:"整体·细节·感受",use:"描述人 / 事 / 物",steps:[
+      ["整体","是什么，第一印象如何",["这是一个……","第一眼给人的感觉是……","如果用一个词形容，……"]],
+      ["细节","两三个具体细节（看到、听到、尝到）",["那里有……","我最喜欢的是……","你可以……"]],
+      ["感受","它对你意味着什么",["它让我觉得……","所以我经常……","对我来说，它……"]]]}}
+};
+
+/* Per-step phrases for the life / work frameworks (a step up from plain sentence starters). */
+const FW_PH = {
+  PREP:{en:[["I'd come down firmly on the side of …","My short answer is …, and here's why.","I'm not fully convinced that …"],
+            ["What tips the balance for me is …","It really comes down to …","The bigger issue is that …"],
+            ["Take … as an example.","I saw this first-hand when …","A case in point is …"],
+            ["So, on balance, …","Which is why I'd still argue that …","That's what makes me confident that …"]],
+        zh:[["在这个问题上，我比较明确地站在……这一边","我的回答很简单：……，理由如下","我对……持保留意见"],
+            ["让我做出这个判断的关键是……","归根结底，这取决于……","更深层的问题在于……"],
+            ["拿……来说","我亲身经历过……","一个很典型的例子是……"],
+            ["综合来看，……","所以我仍然认为……","正因为如此，我很确定……"]]},
+  STAR:{en:[["To give you some context, …","We were in a tricky spot: …","The backdrop was …"],
+            ["The ask was to … within …","What made it hard was …","I owned …, end to end."],
+            ["The first thing I did was …","Rather than …, I chose to …","To get buy-in, I …"],
+            ["We ended up …, X% better than …","The outcome was …","If I did it again, I'd …"]],
+        zh:[["先交代一下背景：……","当时我们处境比较棘手：……","那段时间正好赶上……"],
+            ["我接到的任务是在……内完成……","难点在于……","我全程负责……"],
+            ["我做的第一件事是……","我没有选择……，而是……","为了争取大家的支持，我……"],
+            ["最终……，比……提升了 X%","结果是……","如果重来一次，我会……"]]},
+  PSB:{en:[["One thing that keeps coming up is …","It's costing us … every …","The root of it seems to be …"],
+           ["What if we tried …?","I'd propose a small pilot: …","The simplest fix would be …"],
+           ["That would free up …","The payoff is …","It also lowers the risk of …"],
+           ["Could we try it for two weeks and review?","What would you need to see to say yes?","I'm happy to own the first step."]],
+       zh:[["有个问题反复出现：……","这每……就要耗费我们……","根源似乎在于……"],
+           ["我们能不能试试……？","我建议先小范围试点：……","最简单的解决办法是……"],
+           ["这样可以腾出……","带来的收益是……","同时也能降低……的风险"],
+           ["我们先试两周再复盘，您看行吗？","您需要看到什么才能拍板？","第一步我来牵头。"]]},
+  PPF:{en:[["I actually started out in …","Back when I first …, …","Looking back, it all began with …"],
+           ["These days, my focus is …","What I spend most of my time on now is …","It's evolved into …"],
+           ["Where I'd like to take it next is …","Over the next year or two, I'm aiming to …","Ultimately, I want to …"]],
+       zh:[["其实我最早是做……的","刚开始……的时候，……","回头看，一切要从……说起"],
+           ["现在我的重心是……","目前我大部分时间都花在……","慢慢地，它演变成了……"],
+           ["接下来我想往……方向发展","未来一两年，我的目标是……","长远来看，我希望……"]]},
+  WSN:{en:[["Here's what happened, in a nutshell: …","It started off fine, but then …","To set the scene, …"],
+           ["Looking back, what stands out is …","It made me realise that …","The real lesson for me was …"],
+           ["Going forward, I'll make a point of …","Next time, I'd …","What I'm changing right away is …"]],
+       zh:[["简单说，事情是这样的：……","一开始都还顺利，但后来……","先还原一下当时的情况：……"],
+           ["回头看，最让我在意的是……","这让我意识到……","对我来说真正的收获是……"],
+           ["以后我会特别注意……","下次我会……","我马上要调整的是……"]]},
+  DESC:{en:[["The best way to describe it is …","It's the kind of place that …","What strikes you first is …"],
+            ["What really stays with me is …","You can hear / smell / see …","There's this little detail: …"],
+            ["It never fails to make me feel …","For me, it's more than just …","That's why I keep coming back to …"]],
+        zh:[["如果要形容，我会说它是……","它是那种……的地方","第一眼让人注意到的是……"],
+            ["真正让我印象深刻的是……","你能听到／闻到／看到……","有个小细节：……"],
+            ["它总能让我感到……","对我来说，它不只是……","这就是我一次次回到……的原因"]]}
+};
+
+const DECK = {
+  life:[
+    ["What's a small habit that has made your life better?","哪个小习惯让你的生活变好了？","PREP"],
+    ["Describe a place you go to when you need to recharge.","描述一个你需要“充电”时会去的地方。","DESC"],
+    ["Tell me about a time you tried something completely new.","讲讲你尝试全新事物的一次经历。","WSN"],
+    ["Is it better to live in a big city or a small town?","住在大城市好，还是小城镇好？","PREP"],
+    ["How has the way you spend weekends changed over the years?","这些年你过周末的方式有什么变化？","PPF"],
+    ["Describe a meal you'll never forget.","描述一顿让你难忘的饭。","DESC"],
+    ["Should kids get a phone before age 12?","孩子 12 岁之前该不该有手机？","PREP"],
+    ["Tell me about a trip that didn't go as planned.","讲一次没按计划进行的旅行。","WSN"],
+    ["Describe someone who has influenced how you think.","描述一个影响了你思维方式的人。","DESC"],
+    ["What's something you've changed your mind about recently?","最近你对什么事改变了看法？","WSN"],
+    ["Convince a friend to join you for a weekend hike.","说服朋友周末跟你去徒步。","PSB"],
+    ["How do you want your life to look in five years?","你希望五年后的生活是什么样？","PPF"],
+    ["Is social media making friendships stronger or weaker?","社交媒体让友谊更牢固还是更脆弱？","PREP"],
+    ["Describe your ideal Sunday morning.","描述你理想中的周日早晨。","DESC"],
+    ["Tell me about a skill you taught yourself.","讲一个你自学的技能。","PPF"],
+    ["Suggest a better way for your family to split chores.","为家里分配家务提一个更好的方案。","PSB"],
+    ["What's a book, show or film that stayed with you?","有哪本书、剧或电影让你念念不忘？","PREP"],
+    ["Tell me about a mistake that taught you something.","讲一个让你有所收获的错误。","WSN"]
+  ],
+  work:[
+    ["Tell me about yourself and what you do.","介绍一下你自己和你的工作。","PPF"],
+    ["Describe a time you disagreed with your manager.","讲一次你和上级意见不同的经历。","STAR"],
+    ["Should meetings have a hard 25-minute limit?","会议是否应该严格限制在 25 分钟以内？","PREP"],
+    ["Tell me about a project you're proud of.","讲一个你引以为豪的项目。","STAR"],
+    ["Propose one change that would make your team faster.","提一个能让团队更高效的改变。","PSB"],
+    ["What did you learn from a project that failed?","从一个失败的项目中你学到了什么？","WSN"],
+    ["Is remote work better for productivity?","远程办公更有效率吗？","PREP"],
+    ["Tell me about a time you had to deliver bad news.","讲一次你不得不传达坏消息的经历。","STAR"],
+    ["Ask your manager for more ownership of a project.","向上级争取对项目更多的主导权。","PSB"],
+    ["How has your role changed since you started?","从入职到现在，你的角色有什么变化？","PPF"],
+    ["Describe a colleague you work really well with.","描述一个和你合作非常默契的同事。","DESC"],
+    ["Tell me about a time you handled a tight deadline.","讲一次你应对紧急截止日期的经历。","STAR"],
+    ["Should companies use AI to screen job candidates?","公司应该用 AI 筛选求职者吗？","PREP"],
+    ["Pitch a tool your team should start using.","向团队推荐一个值得使用的工具。","PSB"],
+    ["Walk me through a decision you made with incomplete data.","讲一个你在信息不全时做出的决定。","STAR"],
+    ["What went well and what didn't in your last quarter?","上个季度哪些做得好、哪些不够好？","WSN"],
+    ["Where do you see your career in three years?","三年后你的职业会发展到哪一步？","PPF"],
+    ["Push back on a request that would overload your team.","对一个会让团队超负荷的需求提出异议。","PSB"]
+  ],
+  chart:[
+    /* line: change over time */
+    ["Present this year's user growth to the leadership team.","向管理层汇报今年的用户增长情况。","DATA",
+      {type:"line",title:{en:"Monthly active users, 2025",zh:"2025 年月活跃用户"},unit:{en:"thousands",zh:"千人"},fmt:{suf:"K"},
+       x:"months",series:[{name:{en:"MAU",zh:"月活"},values:[182,188,197,205,214,226,231,219,238,252,266,281]}]}],
+    ["Report the impact of the new support tool, launched in week 5.","汇报第 5 周上线的新客服工具带来的效果。","DATA",
+      {type:"line",title:{en:"Average first-response time",zh:"平均首次响应时间"},unit:{en:"hours",zh:"小时"},fmt:{suf:"h"},
+       x:"weeks12",mark:{at:4,label:{en:"New tool live",zh:"新工具上线"}},series:[{name:{en:"Response time",zh:"响应时间"},values:[9.8,10.2,9.6,10.4,8.1,6.7,5.2,4.6,4.3,4.8,4.1,3.9]}]}],
+    ["Update stakeholders on customer satisfaction over the last six quarters.","向相关方汇报过去六个季度的客户满意度。","DATA",
+      {type:"line",title:{en:"Net Promoter Score by quarter",zh:"各季度净推荐值（NPS）"},unit:{en:"NPS",zh:"NPS"},fmt:{},
+       x:["Q1 '24","Q2 '24","Q3 '24","Q4 '24","Q1 '25","Q2 '25"],series:[{name:{en:"NPS",zh:"NPS"},values:[31,34,29,41,45,44]}]}],
+    ["Report on-time delivery against our 95% target.","对照 95% 的目标汇报准时交付率。","DATA",
+      {type:"line",title:{en:"On-time delivery rate",zh:"准时交付率"},unit:{en:"%",zh:"%"},fmt:{suf:"%"},min:85,
+       x:"months6",ref:{value:95,label:{en:"Target 95%",zh:"目标 95%"}},series:[{name:{en:"On-time rate",zh:"准时率"},values:[91.2,92.5,89.8,93.6,95.1,96.0]}]}],
+    ["Explain the crash spike after the v4.2 release and where things stand now.","解释 v4.2 版本发布后的崩溃高峰，以及目前的情况。","DATA",
+      {type:"line",title:{en:"App crashes per 10k sessions",zh:"每万次会话崩溃数"},unit:{en:"crashes / 10k sessions",zh:"次 / 万次会话"},fmt:{},
+       x:"weeks10",mark:{at:5,label:{en:"v4.2 released",zh:"v4.2 发布"}},series:[{name:{en:"Crashes",zh:"崩溃数"},values:[12,11,13,12,11,27,19,9,7,6]}]}],
+
+    /* bar: comparison */
+    ["Walk the team through revenue by region this year and where growth is coming from.","向团队讲解今年各区域收入，以及增长来自哪里。","DATA",
+      {type:"bar",title:{en:"Revenue by region, 2025",zh:"2025 年各区域收入"},unit:{en:"$ millions",zh:"百万美元"},fmt:{pre:"$",suf:"M"},
+       x:["Q1","Q2","Q3","Q4"],series:[{name:{en:"North America",zh:"北美"},values:[12.4,13.1,13.8,15.2]},{name:{en:"Europe",zh:"欧洲"},values:[8.2,8.0,8.6,9.4]},{name:{en:"APAC",zh:"亚太"},values:[4.1,5.0,6.3,7.8]}]}],
+    ["Present churn by plan and what it means for pricing.","汇报各套餐的流失率，以及对定价的启示。","DATA",
+      {type:"bar",title:{en:"Monthly churn by plan",zh:"各套餐月流失率"},unit:{en:"%",zh:"%"},fmt:{suf:"%"},
+       x:{en:["Basic","Pro","Enterprise"],zh:["基础版","专业版","企业版"]},series:[{name:{en:"2024",zh:"2024"},values:[6.8,3.9,1.6]},{name:{en:"2025",zh:"2025"},values:[7.9,3.1,1.2]}]}],
+    ["Explain budget versus actual spend, and account for the overruns.","说明预算与实际支出的差异，并解释超支部分。","DATA",
+      {type:"bar",title:{en:"Budget vs. actual spend, H1",zh:"上半年预算与实际支出"},unit:{en:"$ thousands",zh:"千美元"},fmt:{pre:"$",suf:"K"},
+       x:{en:["Engineering","Marketing","Sales","Operations"],zh:["研发","市场","销售","运营"]},series:[{name:{en:"Budget",zh:"预算"},values:[820,460,390,210]},{name:{en:"Actual",zh:"实际"},values:[905,410,402,236]}]}],
+    ["Brief sales leadership on this quarter's pipeline.","向销售管理层简报本季度的销售管道。","DATA",
+      {type:"bar",title:{en:"Pipeline by stage",zh:"各阶段销售管道"},unit:{en:"$ millions",zh:"百万美元"},fmt:{pre:"$",suf:"M"},
+       x:{en:["Lead","Qualified","Proposal","Negotiation"],zh:["线索","已确认","方案","谈判"]},series:[{name:{en:"Last quarter",zh:"上季度"},values:[14.0,8.2,4.6,2.1]},{name:{en:"This quarter",zh:"本季度"},values:[17.5,9.1,4.2,2.8]}]}],
+
+    /* hbar: ranking */
+    ["Recommend where to put next quarter's marketing budget.","就下季度的营销预算投放给出建议。","DATA",
+      {type:"hbar",title:{en:"New customers by channel, last quarter",zh:"上季度新客户来源渠道"},unit:{en:"% of new customers",zh:"占新客户 %"},fmt:{suf:"%"},
+       x:{en:["Search","Referral","Social","Events","Email"],zh:["搜索","转介绍","社交媒体","线下活动","邮件"]},series:[{name:{en:"Share",zh:"占比"},values:[34,22,18,14,12]}]}],
+    ["Share the engagement survey results with your team.","向团队分享员工敬业度调研结果。","DATA",
+      {type:"hbar",title:{en:"Engagement survey, % who agree",zh:"敬业度调研（同意比例）"},unit:{en:"% agree",zh:"同意 %"},fmt:{suf:"%"},
+       x:{en:["I know what's expected of me","I have the tools I need","My work is recognized","I see a path to grow here"],zh:["我清楚对我的期望","我有需要的工具","我的工作得到认可","我在这里看得到成长路径"]},series:[{name:{en:"Agree",zh:"同意"},values:[86,71,58,49]}]}],
+    ["Present the top customer feature requests and what we'll build first.","汇报客户最常提的功能需求，以及我们先做哪个。","DATA",
+      {type:"hbar",title:{en:"Top feature requests, customers asking",zh:"热门功能需求（提出的客户数）"},unit:{en:"customers",zh:"家客户"},fmt:{},
+       x:{en:["Bulk export","SSO login","Mobile offline mode","Custom dashboards","Slack alerts","Audit log"],zh:["批量导出","单点登录","移动端离线","自定义看板","Slack 通知","审计日志"]},series:[{name:{en:"Customers",zh:"客户数"},values:[148,121,97,90,64,41]}]}],
+
+    /* stacked: part-to-whole over time */
+    ["Explain how our revenue mix is shifting this year.","说明今年收入结构的变化。","DATA",
+      {type:"stacked",title:{en:"Revenue by product line, 2025",zh:"2025 年各产品线收入"},unit:{en:"$ millions",zh:"百万美元"},fmt:{pre:"$",suf:"M"},
+       x:["Q1","Q2","Q3","Q4"],series:[{name:{en:"Subscriptions",zh:"订阅"},values:[14.2,15.8,17.1,19.0]},{name:{en:"Services",zh:"服务"},values:[6.1,6.0,5.8,5.9]},{name:{en:"Hardware",zh:"硬件"},values:[4.4,4.3,5.5,6.5]}]}],
+    ["Walk the support team through what's driving ticket volume.","向客服团队说明工单量的主要驱动因素。","DATA",
+      {type:"stacked",title:{en:"Support tickets by category",zh:"各类别客服工单量"},unit:{en:"tickets",zh:"张"},fmt:{},
+       x:"months6",series:[{name:{en:"Bugs",zh:"故障"},values:[610,680,720,540,480,450]},{name:{en:"Billing",zh:"账单"},values:[420,390,410,380,360,350]},{name:{en:"How-to",zh:"使用咨询"},values:[300,320,310,330,340,360]}]}],
+
+    /* donut: part-to-whole */
+    ["Explain where our cloud money goes and where to cut first.","说明云成本花在哪里、应先从哪里削减。","DATA",
+      {type:"donut",title:{en:"Cloud spend by category, Q3",zh:"第三季度云成本构成"},unit:{en:"% of $1.2M",zh:"占 120 万美元 %"},fmt:{suf:"%"},
+       x:{en:["Compute","Storage","Data transfer","Databases","Other"],zh:["计算","存储","数据传输","数据库","其他"]},series:[{name:{en:"Share",zh:"占比"},values:[46,21,14,12,7]}]}],
+    ["Present how the engineering team spent its time last quarter.","汇报研发团队上季度的时间分配。","DATA",
+      {type:"donut",title:{en:"Engineering time, last quarter",zh:"研发团队上季度时间分配"},unit:{en:"% of hours",zh:"占工时 %"},fmt:{suf:"%"},
+       x:{en:["New features","Maintenance","Bug fixes","Meetings & planning"],zh:["新功能","维护","修复故障","会议与规划"]},series:[{name:{en:"Share",zh:"占比"},values:[44,26,18,12]}]}],
+
+    /* funnel: flow & conversion */
+    ["Explain where we lose people in the signup funnel and what to fix first.","说明注册漏斗中用户在哪里流失，以及应先解决什么。","DATA",
+      {type:"funnel",title:{en:"Signup funnel, % of visitors",zh:"注册漏斗（占访客比例）"},unit:{en:"% of visitors",zh:"占访客 %"},fmt:{suf:"%"},
+       x:{en:["Visited site","Signed up","Started trial","Became paying"],zh:["访问网站","完成注册","开始试用","成为付费用户"]},series:[{name:{en:"Share",zh:"比例"},values:[100,38,21,6.5]}]}],
+    ["Report on this year's hiring funnel for engineering roles.","汇报今年研发岗位的招聘漏斗。","DATA",
+      {type:"funnel",title:{en:"Engineering hiring funnel, 2025",zh:"2025 年研发岗招聘漏斗"},unit:{en:"candidates",zh:"人"},fmt:{},
+       x:{en:["Applied","Passed screen","Interviewed","Got an offer","Accepted"],zh:["投递","通过初筛","参加面试","获得录用","接受录用"]},series:[{name:{en:"Candidates",zh:"候选人"},values:[1240,310,96,18,14]}]}],
+
+    /* waterfall: what moved the number */
+    ["Explain how operating profit got from 2024 to 2025.","说明营业利润从 2024 年到 2025 年的变化来源。","DATA",
+      {type:"waterfall",title:{en:"Operating profit bridge, 2024 → 2025",zh:"营业利润变化拆解（2024 → 2025）"},unit:{en:"$ millions",zh:"百万美元"},fmt:{pre:"$",suf:"M"},totals:[0,6],
+       x:{en:["2024 profit","Price increase","Higher volume","Input costs","FX","Efficiency","2025 profit"],zh:["2024年利润","提价","销量增长","原材料成本","汇率","效率提升","2025年利润"]},series:[{name:{en:"Change",zh:"变化"},values:[42.0,6.5,4.2,-5.8,-1.9,2.4,47.4]}]}],
+    ["Report how headcount changed over the year.","汇报全年人员编制的变化。","DATA",
+      {type:"waterfall",title:{en:"Headcount bridge, 2025",zh:"2025 年人员编制变化"},unit:{en:"people",zh:"人"},fmt:{},totals:[0,5],
+       x:{en:["Start of year","New hires","Attrition","Restructuring","Transfers in","End of year"],zh:["年初","新招聘","自然流失","组织调整","内部调入","年末"]},series:[{name:{en:"Change",zh:"变化"},values:[180,46,-21,-8,5,202]}]}],
+
+    /* diverge: deviation from target */
+    ["Report Q3 sales against plan by region.","按区域汇报第三季度销售额与计划的差距。","DATA",
+      {type:"diverge",title:{en:"Q3 sales vs. plan, by region",zh:"第三季度各区域销售额 vs 计划"},unit:{en:"% above or below plan",zh:"高于 / 低于计划 %"},fmt:{suf:"%"},
+       x:{en:["North","East","Central","South","West"],zh:["华北","华东","华中","华南","西部"]},series:[{name:{en:"vs. plan",zh:"对比计划"},values:[8.2,3.1,0.5,-1.4,-6.7]}]}],
+    ["Share what improved and what slipped in this year's engagement survey.","分享今年敬业度调研中哪些项目改善了、哪些下滑了。","DATA",
+      {type:"diverge",title:{en:"Engagement score change vs. last year",zh:"敬业度得分同比变化"},unit:{en:"points",zh:"分"},fmt:{suf:" pts"},
+       x:{en:["Recognition","Clarity of goals","Tools","Workload","Growth path"],zh:["认可","目标清晰度","工具","工作量","成长路径"]},series:[{name:{en:"Change",zh:"变化"},values:[6,4,1,-3,-7]}]}],
+
+    /* scatter: correlation */
+    ["Tell the sales team what the data says about call volume and results.","告诉销售团队：数据如何反映电话量与成单之间的关系。","DATA",
+      {type:"scatter",title:{en:"Calls vs. deals closed, by rep",zh:"每位销售的通话量与成单数"},unit:{en:"each dot is one rep",zh:"每个点代表一位销售"},
+       axes:{x:{en:"Calls per week",zh:"每周通话数"},y:{en:"Deals closed this quarter",zh:"本季度成单数"}},fmtX:{},fmt:{},
+       points:[["Ana",42,14],["Ben",35,11],["Chen",58,19],["Dev",22,6],["Eli",47,13],["Fay",30,10],["Gus",64,15],["Hana",26,12,1],["Ivan",51,17],["Jo",18,4],["Kim",39,12],["Leo",70,16,1]]}],
+    ["Recommend which marketing campaigns to scale next quarter.","建议下季度应加大投入哪些营销活动。","DATA",
+      {type:"scatter",title:{en:"Campaign spend vs. qualified leads",zh:"营销活动投入与合格线索数"},unit:{en:"each dot is one campaign",zh:"每个点代表一个营销活动"},
+       axes:{x:{en:"Spend ($K)",zh:"投入（千美元）"},y:{en:"Qualified leads",zh:"合格线索数"}},fmtX:{pre:"$",suf:"K"},fmt:{},
+       points:[["Webinar",12,180],["Search Q1",40,420],["Search Q2",55,510],["Social ads",30,150],["Trade show",80,300,1],["Podcast",18,210],["Email nurture",8,160],["Retargeting",25,290],["Partner co-marketing",15,260,1],["Display ads",35,140]]}],
+
+    /* hist: distribution */
+    ["Describe how much a typical customer spends per order.","描述客户每单的典型消费水平。","DATA",
+      {type:"hist",title:{en:"Order value, last 30 days",zh:"近 30 天订单金额分布"},unit:{en:"number of orders",zh:"订单数"},fmt:{},
+       x:["$0–25","$25–50","$50–75","$75–100","$100–150","$150–200","$200+"],series:[{name:{en:"Orders",zh:"订单数"},values:[1840,3120,2410,1260,820,310,190]}]}],
+    ["Explain how quickly we resolve tickets and where the long tail is.","说明我们解决工单的速度，以及长尾出现在哪里。","DATA",
+      {type:"hist",title:{en:"Time to resolve support tickets",zh:"客服工单解决时长分布"},unit:{en:"number of tickets",zh:"工单数"},fmt:{},
+       x:{en:["<1h","1–4h","4–8h","8–24h","1–2d","2–5d","5d+"],zh:["<1小时","1–4小时","4–8小时","8–24小时","1–2天","2–5天","5天以上"]},series:[{name:{en:"Tickets",zh:"工单数"},values:[620,1480,910,540,260,130,70]}]}],
+
+    /* heatmap: patterns across two dimensions */
+    ["Explain what the cohort data says about customer retention.","说明同期群数据反映了怎样的客户留存情况。","DATA",
+      {type:"heatmap",title:{en:"Retention by signup month",zh:"按注册月份的留存率"},unit:{en:"% still active, months after signup",zh:"注册后第 N 个月仍活跃的比例 %"},fmt:{suf:"%"},
+       x:["M1","M2","M3","M4","M5","M6"],rows:{en:["Jan","Feb","Mar","Apr","May","Jun"],zh:["1月","2月","3月","4月","5月","6月"]},
+       grid:[[62,51,46,43,41,40],[60,50,45,42,40,null],[64,54,49,46,null,null],[67,57,52,null,null,null],[69,59,null,null,null,null],[71,null,null,null,null,null]]}],
+    ["Propose a support staffing schedule based on when customers reach out.","根据客户咨询的时间分布，提出客服排班方案。","DATA",
+      {type:"heatmap",title:{en:"Live chats by weekday and time",zh:"按星期与时段的在线咨询量"},unit:{en:"average chats",zh:"平均咨询量"},fmt:{},
+       x:["8–10","10–12","12–14","14–16","16–18","18–20"],rows:{en:["Mon","Tue","Wed","Thu","Fri"],zh:["周一","周二","周三","周四","周五"]},
+       grid:[[42,88,64,71,58,20],[38,76,60,66,52,18],[35,72,58,63,50,17],[37,74,61,68,55,19],[30,61,49,52,41,12]]}]
+  ]
+};
+
+const EXAMPLES = {
+  en:[["Salary talk","Next week I'm asking my manager for a raise. Last year I led two big launches."],
+      ["Small talk","At the offsite I'll be chatting with our new VP and don't know how to break the ice."],
+      ["Explain a delay","The project is slipping two weeks and I need to explain why to the client."],
+      ["Weekend story","A coworker will ask what I did this weekend. I went camping by the sea."]],
+  zh:[["工作汇报","周五要在部门会上汇报季度进展，其中一个模块延期了"],
+      ["婉拒请求","同事想让我帮忙做他的报告，但我这周已经排满了"],
+      ["即兴发言","朋友婚礼上被临时叫上台说几句祝福"],
+      ["面试自我介绍","下周面试一家新公司的产品经理岗位"]]
+};
+
+/* ---------- storage ---------- */
+const LS = {
+  get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+};
+
+/* ---------- state: one independent section per language ---------- */
+function freshSection(lang){ return {deck:"work", idx:0, guide:guideFromDeck(lang,"work",0), answers:[], feedback:null, scenario:""}; }
+let app = LS.get("fs.v2", null);
+if(!app || !app.sec){ app = {lang:"en", mode:"draw", sec:{en:freshSection("en"), zh:freshSection("zh")}}; }
+const L = () => app.lang;
+const S = () => app.sec[app.lang];
+const t = k => T[L()][k];
+function persist(){ LS.set("fs.v2", app); }
+
+function guideFromDeck(lang, deck, idx){
+  const row = DECK[deck][idx]; const F = FRAMEWORKS[row[2]][lang];
+  return {source:"deck", fw:row[2], deck, topic: lang==="en"?row[0]:row[1], context:"", framework:F.name, why:F.use,
+    steps:F.steps.map(([label,prompt],k)=>({label,prompt,phrases: row[2]==="DATA" && row[3] ? (DATA_STEP_PH[lang][k] || CHART_TYPES[row[3].type]?.ph[lang] || []) : (FW_PH[row[2]]?.[lang]?.[k] || [])})),
+    chart: row[3]||null, phrases:[]};
+}
+
+/* ---------- dom ---------- */
+const $ = id => document.getElementById(id);
+function h(tag, attrs={}, ...kids){
+  const el = document.createElement(tag);
+  for(const [k,v] of Object.entries(attrs)){
+    if(k==="class") el.className=v; else if(k.startsWith("on")) el.addEventListener(k.slice(2),v);
+    else if(v!==false && v!=null) el.setAttribute(k,v===true?"":v);
+  }
+  for(const kid of kids.flat()){ if(kid==null||kid===false) continue; el.append(kid.nodeType?kid:String(kid)); }
+  return el;
+}
+function setStatus(el, text, kind){
+  el.hidden = !text; el.className = "status" + (kind==="err"?" err":"");
+  el.replaceChildren(); if(!text) return;
+  if(kind==="busy") el.append(h("span",{class:"dot"}));
+  el.append(h("span",{},text));
+}
+function countText(v){
+  v = (v||"").trim(); if(!v) return "";
+  if(L()==="zh"){ const n=(v.match(/[一-鿿]/g)||[]).length; return n+" 字"; }
+  return (v.match(/[A-Za-z']+/g)||[]).length+" words";
+}
+
+/* ---------- render ---------- */
+function renderChrome(){
+  document.documentElement.lang = L()==="zh" ? "zh-CN" : "en";
+  document.querySelectorAll("[data-t]").forEach(el=>{ el.textContent = t(el.dataset.t); });
+  $("scenario").placeholder = t("scenarioPh");
+  $("scenario").value = S().scenario||"";
+  $("langZh").setAttribute("aria-pressed", L()==="zh");
+  $("langEn").setAttribute("aria-pressed", L()==="en");
+  $("modeDraw").setAttribute("aria-pressed", app.mode==="draw");
+  $("modeFree").setAttribute("aria-pressed", app.mode==="free");
+  $("drawPanel").hidden = app.mode!=="draw";
+  $("freePanel").hidden = app.mode!=="free";
+  $("deckLife").setAttribute("aria-pressed", S().deck==="life");
+  $("deckWork").setAttribute("aria-pressed", S().deck==="work");
+  $("deckChart").setAttribute("aria-pressed", S().deck==="chart");
+  renderTypeChips();
+  const ex = $("exampleChips"); ex.replaceChildren();
+  EXAMPLES[L()].forEach(([label,text])=>ex.append(h("button",{class:"chip",type:"button",onclick:()=>{$("scenario").value=text;S().scenario=text;persist();}}, label)));
+  ["buildStatus","fbStatus"].forEach(id=>setStatus($(id),""));
+}
+
+function renderGuide(){
+  const g = S().guide;
+  $("fwTag").textContent = g.framework;
+  $("fwWhy").textContent = g.why||"";
+  $("topicQ").textContent = g.topic;
+  $("topicCtx").hidden = !g.context; $("topicCtx").textContent = g.context||"";
+  renderChart(g.chart||null);
+  const steps = $("steps"); steps.replaceChildren();
+  g.steps.forEach((s,i)=>{
+    const ta = h("textarea",{id:"ans"+i, rows:"2"});
+    ta.value = S().answers[i]||"";
+    const wc = h("div",{class:"wc"}, countText(ta.value));
+    const card = h("article",{class:"step"},
+      h("div",{class:"step-head"}, h("span",{class:"n"}, String(i+1).padStart(2,"0")), h("h3",{}, s.label)),
+      h("div",{class:"prompt"}, s.prompt),
+      s.phrases?.length ? h("div",{class:"sphr"}, s.phrases.map(x=>h("span",{}, x))) : null,
+      ta, wc);
+    ta.addEventListener("focus",()=>{document.querySelectorAll(".step").forEach(x=>x.classList.remove("active")); card.classList.add("active");});
+    ta.addEventListener("input",()=>{S().answers[i]=ta.value; wc.textContent=countText(ta.value); renderRail(); persist();});
+    steps.append(card);
+  });
+  renderRail();
+  $("phrasePanel").hidden = !(g.phrases&&g.phrases.length);
+  $("phrases").replaceChildren(...(g.phrases||[]).map(p=>h("div",{class:"phrase"}, p.text, p.note?h("small",{},p.note):null)));
+}
+function renderRail(){
+  const r = $("rail"); r.replaceChildren();
+  S().guide.steps.forEach((s,i)=>{
+    if(i) r.append(h("span",{class:"arrow"},"→"));
+    r.append(h("span",{class:"node"+((S().answers[i]||"").trim()?" done":"")}, s.label));
+  });
+}
+function setGuide(g){
+  const s = S(); s.guide = g; s.answers = new Array(g.steps.length).fill(""); s.feedback=null;
+  $("fbPanel").hidden = true; stopSpeech(); persist(); renderChrome(); renderGuide();
+}
+function renderAll(){
+  stopSpeech(); renderChrome(); renderGuide(); renderNotebook(); renderHistory();
+  if(S().feedback) renderFeedback(S().feedback); else $("fbPanel").hidden = true;
+}
+
+/* ---------- charts ---------- */
+/* Chart types, grouped by the message they carry (after the FT Visual Vocabulary). */
+const CHART_TYPES = {
+  line:{en:"Line",zh:"折线图",cat:{en:"Change over time",zh:"随时间变化"},
+    tip:{en:"Say the direction first, then start → end, then the one turning point worth explaining.",zh:"先说方向，再说起点到终点，最后只讲一个值得解释的拐点。"},
+    ph:{en:["rose steadily from X to Y","peaked at X in …","dipped briefly in …, then recovered","has more than doubled since …","has levelled off since …"],
+        zh:["从 X 稳步上升到 Y","在…达到峰值 X","…出现短暂回落，随后回升","自…以来翻了一番多","…之后趋于平稳"]}},
+  bar:{en:"Column",zh:"柱状图",cat:{en:"Comparison",zh:"比较大小"},
+    tip:{en:"Compare, don't list: name the biggest, the smallest, and the gap that matters.",zh:"做比较，不要逐个念：说最大的、最小的，以及最关键的差距。"},
+    ph:{en:["A is roughly twice the size of B","the gap between A and B widened to …","A leads, followed by B","grew the fastest, up X% on last quarter","stayed roughly flat"],
+        zh:["A 大约是 B 的两倍","A 和 B 的差距扩大到…","A 领先，B 紧随其后","增长最快，环比上涨 X%","基本持平"]}},
+  hbar:{en:"Ranking bar",zh:"条形图（排名）",cat:{en:"Ranking",zh:"排名"},
+    tip:{en:"Lead with the top item, then say how concentrated the ranking is.",zh:"先说排第一的，再说排名是集中还是分散。"},
+    ph:{en:["tops the list at …","the top two account for more than half","… trails well behind","there's a clear drop-off after …","ranks last, at just …"],
+        zh:["以…位居榜首","前两名合计超过一半","…远远落后","…之后出现明显断层","排名垫底，仅为…"]}},
+  stacked:{en:"Stacked column",zh:"堆叠柱状图",cat:{en:"Mix over time",zh:"构成随时间变化"},
+    tip:{en:"Talk about two things separately: how the total moved, and how the mix shifted inside it.",zh:"分开讲两件事：总量怎么变，内部结构怎么变。"},
+    ph:{en:["makes up a growing share of …","the mix is shifting toward …","the total grew, mostly because of …","held steady as a share","accounts for the bulk of …"],
+        zh:["在…中的占比越来越大","结构正在向…倾斜","总量增长，主要来自…","占比基本稳定","占了…的大头"]}},
+  donut:{en:"Donut / pie",zh:"环形图 / 饼图",cat:{en:"Part-to-whole",zh:"构成占比"},
+    tip:{en:"Name the biggest slice as a fraction people can picture, then group the rest.",zh:"把最大的一块说成大家能想象的比例（如“将近一半”），其余合并着说。"},
+    ph:{en:["accounts for almost half of …","roughly one in five","the top two together make up …","the remaining X% is split across …","the single largest slice is …"],
+        zh:["占了将近一半","大约五分之一","前两项合计占…","剩下的 X% 分散在…","占比最大的一块是…"]}},
+  funnel:{en:"Funnel",zh:"漏斗图",cat:{en:"Flow & conversion",zh:"流程转化"},
+    tip:{en:"Point to the single biggest drop-off and turn it into 'X out of 100'.",zh:"找出流失最大的那一步，并换算成“每 100 个里有 X 个”。"},
+    ph:{en:["we lose about X% between A and B","the biggest drop-off is at …","only X out of every 100 make it to …","conversion from A to B is X%","lifting this step by just X points would …"],
+        zh:["从 A 到 B 流失了约 X%","流失最严重的是…这一步","每 100 人中只有 X 人走到…","A 到 B 的转化率是 X%","这一步只要提升 X 个点，就能…"]}},
+  waterfall:{en:"Waterfall",zh:"瀑布图",cat:{en:"What moved the number",zh:"变化拆解"},
+    tip:{en:"Start → end first, then the biggest push up and the biggest drag down. Skip the small ones.",zh:"先讲起点到终点，再讲最大的拉动项和最大的拖累项，小项略过。"},
+    ph:{en:["we started at X and ended at Y","the biggest tailwind was …","this was partly offset by …","the net effect was …","without the … hit, we'd have reached …"],
+        zh:["起点是 X，终点是 Y","最大的拉动因素是…","部分被…抵消","净影响为…","如果没有…的冲击，本可以达到…"]}},
+  diverge:{en:"Deviation bar",zh:"偏差条形图",cat:{en:"Deviation from target",zh:"偏离目标"},
+    tip:{en:"Give the scorecard first (how many beat, how many missed), then the best and the worst.",zh:"先给“成绩单”（几个超额、几个未达标），再讲最好和最差。"},
+    ph:{en:["came in X points above plan","missed plan by …","three of five beat the target","the biggest shortfall was in …","landed roughly on target"],
+        zh:["比计划高出 X 个点","比计划低了…","五个中有三个超额完成","缺口最大的是…","基本达标"]}},
+  scatter:{en:"Scatter",zh:"散点图",cat:{en:"Correlation",zh:"相关关系"},
+    tip:{en:"State the relationship in one line, then point to the outliers, because that's where the story usually is.",zh:"一句话说清两者关系，再指出离群点，故事通常就在那里。"},
+    ph:{en:["there's a clear positive relationship between X and Y","the more X, the more Y, up to a point","one outlier stands out: …","most points cluster around …","correlation isn't causation, but …"],
+        zh:["X 和 Y 之间有明显的正相关","X 越多，Y 越多，但有上限","有一个离群点很突出：…","大多数点集中在…","相关不等于因果，但…"]}},
+  hist:{en:"Histogram",zh:"直方图",cat:{en:"Distribution",zh:"分布"},
+    tip:{en:"Describe the typical case, the spread, and the tail, in that order.",zh:"按顺序讲：典型情况、分布范围、长尾。"},
+    ph:{en:["most … fall between X and Y","the typical … is around …","the distribution is skewed to the right","there's a long tail of …","only a small share exceed …"],
+        zh:["大多数…落在 X 到 Y 之间","典型的…大约是…","分布向右偏","存在…的长尾","只有一小部分超过…"]}},
+  heatmap:{en:"Heatmap",zh:"热力图",cat:{en:"Patterns across two dimensions",zh:"双维度模式"},
+    tip:{en:"Explain how to read it in one line, then describe the pattern along each direction.",zh:"先用一句话说怎么看，再分别讲横向和纵向的规律。"},
+    ph:{en:["the darker the cell, the higher …","drops sharply after the first …","newer … are holding up better","the busiest window is …","there's a clear pattern by …"],
+        zh:["颜色越深，…越高","在第一个…之后大幅下降","越新的…表现越好","最繁忙的时段是…","按…有明显规律"]}}
+};
+/* Phrases for the Takeaway / Driver / So-what steps; the Key-numbers step uses the chart type's own phrases. */
+const DATA_STEP_PH = {
+  en:[["The headline here is …","If you remember one thing, it's that …","In a nutshell, we're …"],
+      null,
+      ["This was largely driven by …","The timing lines up with …","A big part of the story is …"],
+      ["What this means for us is …","So I'd recommend we …","The decision we need today is …"]],
+  zh:[["一句话总结：……","最核心的结论是……","简单来说，我们……"],
+      null,
+      ["这主要是由……驱动的","时间点上正好对应……","其中很大一部分原因在于……"],
+      ["这对我们意味着……","所以我建议……","今天需要大家拍板的是……"]]
+};
+const CHART_ORDER = ["line","bar","hbar","stacked","donut","funnel","waterfall","diverge","scatter","hist","heatmap"];
+
+const MONTHS = {en:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"], zh:["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"]};
+function xLabels(c, lang){
+  if(c.x==="months") return MONTHS[lang];
+  if(c.x==="months6") return MONTHS[lang].slice(0,6);
+  if(typeof c.x==="string" && c.x.startsWith("weeks")) return Array.from({length:+c.x.slice(5)},(_,i)=> lang==="zh" ? `第${i+1}周` : `W${i+1}`);
+  if(!c.x) return [];
+  return Array.isArray(c.x) ? c.x : c.x[lang];
+}
+function allVals(c){
+  if(c.points) return c.points.map(p=>p[2]);
+  if(c.grid) return c.grid.flat().filter(v=>v!=null);
+  return c.series.flatMap(s=>s.values);
+}
+const decOf = (c, vals) => (vals||allVals(c)).some(v=>v%1!==0) ? 1 : 0;
+const fmtN = (f, v, d) => (f?.pre||"") + Number(v).toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d}) + (f?.suf||"");
+const fmtV = (c,v) => fmtN(c.fmt, v, decOf(c));
+const fmtS = (c,v) => (v>0?"+":v<0?"−":"") + fmtN(c.fmt, Math.abs(v), decOf(c));
+function chartText(c, lang){
+  const ty = CHART_TYPES[c.type];
+  let out = `${c.title[lang]} (${ty ? ty[lang]+", " : ""}${c.unit[lang]})\n`;
+  const xs = xLabels(c, lang);
+  if(c.type==="scatter"){
+    out += `x = ${c.axes.x[lang]}, y = ${c.axes.y[lang]}\n` + c.points.map(p=>`${p[0]}: x ${fmtN(c.fmtX,p[1],0)}, y ${fmtN(c.fmt,p[2],0)}`).join("; ") + "\n";
+  } else if(c.type==="heatmap"){
+    c.rows[lang].forEach((r,i)=>{ out += `${r}: ` + xs.map((x,j)=>`${x} ${c.grid[i][j]==null?"n/a":fmtV(c,c.grid[i][j])}`).join(", ") + "\n"; });
+  } else if(c.type==="waterfall"){
+    const tot = new Set(c.totals); out += xs.map((x,i)=>`${x} ${tot.has(i)?fmtV(c,c.series[0].values[i]):fmtS(c,c.series[0].values[i])}`).join(", ") + "\n";
+  } else {
+    c.series.forEach(s=>{ out += `${s.name[lang]}: ` + xs.map((x,i)=>`${x} ${c.type==="diverge"?fmtS(c,s.values[i]):fmtV(c,s.values[i])}`).join(", ") + "\n"; });
+  }
+  if(c.ref) out += `${c.ref.label[lang]}\n`;
+  if(c.mark) out += `${c.mark.label[lang]}: ${xs[c.mark.at]}\n`;
+  return out;
+}
+function niceStep(range, n){ const raw = range/n, p = Math.pow(10, Math.floor(Math.log10(raw))); const m = raw/p; return (m<=1?1:m<=2?2:m<=2.5?2.5:m<=5?5:10)*p; }
+function scaleOf(lo, hi){ if(hi<=lo) hi = lo+1; const step = niceStep(hi-lo, 4); return {lo:Math.floor(lo/step)*step, hi:Math.ceil(hi/step)*step, step}; }
+const SVGNS = "http://www.w3.org/2000/svg";
+function sv(tag, attrs={}, text){ const el=document.createElementNS(SVGNS,tag); for(const [k,v] of Object.entries(attrs)) el.setAttribute(k,v); if(text!=null) el.textContent=text; return el; }
+function roundTop(x,y,w,hgt,r){ hgt=Math.max(hgt,0); r=Math.min(r,w/2,hgt); return `M${x},${y+hgt}V${y+r}Q${x},${y} ${x+r},${y}H${x+w-r}Q${x+w},${y} ${x+w},${y+r}V${y+hgt}Z`; }
+function roundBottom(x,y,w,hgt,r){ hgt=Math.max(hgt,0); r=Math.min(r,w/2,hgt); return `M${x},${y}H${x+w}V${y+hgt-r}Q${x+w},${y+hgt} ${x+w-r},${y+hgt}H${x+r}Q${x},${y+hgt} ${x},${y+hgt-r}Z`; }
+function roundRight(x,y,w,hgt,r){ r=Math.min(r,hgt/2,w); return `M${x},${y}H${x+w-r}Q${x+w},${y} ${x+w},${y+r}V${y+hgt-r}Q${x+w},${y+hgt} ${x+w-r},${y+hgt}H${x}Z`; }
+function roundLeft(x,y,w,hgt,r){ r=Math.min(r,hgt/2,w); return `M${x+w},${y}H${x+r}Q${x},${y} ${x},${y+r}V${y+hgt-r}Q${x},${y+hgt} ${x+r},${y+hgt}H${x+w}Z`; }
+function xText(svg, x, y, label){
+  const t = sv("text",{x,y,class:"ctick","text-anchor":"middle"});
+  let parts = [label];
+  if(label.length>11 && label.includes(" ")){ const mid = label.length/2; let best=-1; for(let i=0;i<label.length;i++) if(label[i]===" " && (best<0 || Math.abs(i-mid)<Math.abs(best-mid))) best=i; parts=[label.slice(0,best), label.slice(best+1)]; }
+  parts.forEach((p,i)=>t.append(sv("tspan",{x,dy:i?14:0},p)));
+  svg.append(t);
+}
+function yAxis(svg, sc, X0, X1, yOf, f){
+  const d = sc.step%1!==0 ? 1 : 0;
+  for(let v=sc.lo; v<=sc.hi+1e-9; v+=sc.step){
+    svg.append(sv("line",{x1:X0,x2:X1,y1:yOf(v),y2:yOf(v),class:Math.abs(v)<1e-9?"cax":"cgrid"}));
+    svg.append(sv("text",{x:X0-8,y:yOf(v)+4,class:"ctick","text-anchor":"end"}, fmtN(f, v, d)));
+  }
+}
+const sw = i => h("i",{class:"sw",style:`background:var(--s${i})`});
+
+function renderChart(c){
+  const fig = $("chart"); fig.replaceChildren(); fig.hidden = !c; if(!c) return;
+  const lang = L(), xs = xLabels(c, lang), ty = CHART_TYPES[c.type];
+  const tip = h("div",{class:"ctip",hidden:true});
+  const head = h("figcaption",{class:"chead"},
+    ty ? h("span",{class:"ctype"}, ty[lang], " · ", ty.cat[lang]) : null,
+    h("div",{class:"ctitle"}, h("b",{}, c.title[lang]), " ", h("span",{class:"note"}, c.unit[lang])));
+  let legend = null;
+  if(["line","bar","stacked"].includes(c.type) && c.series.length>1) legend = c.series.map((s,i)=>[i+1, s.name[lang]]);
+  if(c.type==="waterfall") legend = [[3, lang==="zh"?"增加":"Increase"],[2, lang==="zh"?"减少":"Decrease"],[1, lang==="zh"?"总计":"Total"]];
+  if(c.type==="diverge") legend = [[1, lang==="zh"?"高于":"Above"],[2, lang==="zh"?"低于":"Below"]];
+  if(legend) head.append(h("div",{class:"legend"}, legend.map(([k,name])=>h("span",{}, sw(k), name))));
+  fig.append(head);
+  const box = h("div",{class:"cbox"}); fig.append(box);
+  const showTip = (evt, rows) => { tip.hidden=false; tip.replaceChildren(...rows); const r=box.getBoundingClientRect(); let x=evt.clientX-r.left+14, y=evt.clientY-r.top+14; if(x>r.width-170) x-=190; tip.style.left=x+"px"; tip.style.top=y+"px"; };
+  const hideTip = () => { tip.hidden=true; };
+  const hit = (el, rows) => { el.addEventListener("mousemove",e=>showTip(e,rows)); el.addEventListener("mouseleave",hideTip); };
+  const tipRows = i => [h("div",{class:"tt"}, xs[i]), ...c.series.map((s,k)=>h("div",{}, c.series.length>1?sw(k+1):null, c.series.length>1? s.name[lang]+"  ":"", h("b",{}, fmtV(c,s.values[i]))))];
+  const W = 640;
+  let svg;
+
+  if(c.type==="hbar"){
+    const s = c.series[0], max = Math.max(...s.values), rowH = 46, H = xs.length*rowH;
+    svg = sv("svg",{viewBox:`0 0 ${W} ${H}`});
+    xs.forEach((lab,i)=>{
+      const y = i*rowH, w = Math.max(2, (s.values[i]/max)*(W-90));
+      svg.append(sv("text",{x:0,y:y+14,class:"cl"}, lab));
+      svg.append(sv("path",{d:roundRight(0,y+20,w,16,4),fill:"var(--s1)"}));
+      svg.append(sv("text",{x:w+8,y:y+33,class:"cv"}, fmtV(c,s.values[i])));
+      const r = sv("rect",{x:0,y,width:W,height:rowH,fill:"transparent"}); hit(r, tipRows(i)); svg.append(r);
+    });
+  }
+  else if(c.type==="funnel"){
+    const v = c.series[0].values, max = v[0], rowH = 58, H = xs.length*rowH;
+    svg = sv("svg",{viewBox:`0 0 ${W} ${H}`});
+    xs.forEach((lab,i)=>{
+      const y = i*rowH, w = Math.max(4, v[i]/max*W), x = (W-w)/2;
+      const lt = sv("text",{x:0,y:y+15,class:"cl"}, lab + "  "); lt.append(sv("tspan",{class:"cv"}, fmtV(c,v[i]))); svg.append(lt);
+      if(i){ const conv = v[i]/v[i-1]*100; svg.append(sv("text",{x:W,y:y+15,class:"cann","text-anchor":"end"}, (lang==="zh"?"上一步的 ":"") + conv.toFixed(conv<10?1:0) + "%" + (lang==="zh"?"":" of previous"))); }
+      svg.append(sv("path",{d:`M${x+4},${y+24}H${x+w-4}Q${x+w},${y+24} ${x+w},${y+28}V${y+42}Q${x+w},${y+46} ${x+w-4},${y+46}H${x+4}Q${x},${y+46} ${x},${y+42}V${y+28}Q${x},${y+24} ${x+4},${y+24}Z`,fill:"var(--s1)"}));
+      const r = sv("rect",{x:0,y,width:W,height:rowH,fill:"transparent"});
+      hit(r, [h("div",{class:"tt"}, lab), h("div",{}, h("b",{}, fmtV(c,v[i]))), i ? h("div",{}, `${(v[i]/v[i-1]*100).toFixed(1)}% ${lang==="zh"?"转化自上一步":"of previous step"}`) : null].filter(Boolean));
+      svg.append(r);
+    });
+  }
+  else if(c.type==="diverge"){
+    const v = c.series[0].values, maxAbs = Math.max(...v.map(Math.abs)), rowH = 46, H = xs.length*rowH, mid = W/2, half = W/2-80;
+    svg = sv("svg",{viewBox:`0 0 ${W} ${H}`});
+    svg.append(sv("line",{x1:mid,x2:mid,y1:0,y2:H,class:"cax"}));
+    xs.forEach((lab,i)=>{
+      const y = i*rowH, w = Math.max(2, Math.abs(v[i])/maxAbs*half), pos = v[i]>=0;
+      svg.append(sv("text",{x:pos?mid-8:mid+8,y:y+33,class:"cl","text-anchor":pos?"end":"start"}, lab));
+      svg.append(sv("path",{d:pos?roundRight(mid,y+20,w,16,4):roundLeft(mid-w,y+20,w,16,4),fill:pos?"var(--s1)":"var(--s2)"}));
+      svg.append(sv("text",{x:pos?mid+w+8:mid-w-8,y:y+33,class:"cv","text-anchor":pos?"start":"end"}, fmtS(c,v[i])));
+      const r = sv("rect",{x:0,y,width:W,height:rowH,fill:"transparent"}); hit(r, [h("div",{class:"tt"}, lab), h("b",{}, fmtS(c,v[i]))]); svg.append(r);
+    });
+  }
+  else if(c.type==="donut"){
+    const v = c.series[0].values, total = v.reduce((a,b)=>a+b,0), R = 100, r0 = 62, C = 120;
+    svg = sv("svg",{viewBox:"0 0 240 240",class:"donut"});
+    let a = -Math.PI/2;
+    v.forEach((val,i)=>{
+      const a2 = a + val/total*Math.PI*2, large = a2-a > Math.PI ? 1 : 0;
+      const p = (rad, ang) => `${C+rad*Math.cos(ang)},${C+rad*Math.sin(ang)}`;
+      const path = sv("path",{d:`M${p(R,a)}A${R},${R} 0 ${large} 1 ${p(R,a2)}L${p(r0,a2)}A${r0},${r0} 0 ${large} 0 ${p(r0,a)}Z`,fill:`var(--s${i+1})`,stroke:"var(--surface)","stroke-width":2});
+      hit(path, [h("div",{class:"tt"}, xs[i]), h("b",{}, fmtV(c,val))]);
+      svg.append(path); a = a2;
+    });
+    const top = v.indexOf(Math.max(...v));
+    svg.append(sv("text",{x:C,y:C+4,class:"cbig","text-anchor":"middle"}, fmtV(c,v[top])));
+    svg.append(sv("text",{x:C,y:C+24,class:"cann","text-anchor":"middle"}, xs[top]));
+    const list = h("ul",{class:"dlist"}, xs.map((lab,i)=>h("li",{}, sw(i+1), h("span",{}, lab), h("b",{}, fmtV(c,v[i])))));
+    box.classList.add("dwrap"); box.append(svg, list, tip);
+    svg = null;
+  }
+  else if(c.type==="heatmap"){
+    const rows = c.rows[lang], labW = 64, headH = 24, cellH = 36, cellW = (W-labW)/xs.length, H = headH + rows.length*cellH;
+    const vals = allVals(c), mn = Math.min(...vals), mx = Math.max(...vals);
+    svg = sv("svg",{viewBox:`0 0 ${W} ${H}`});
+    xs.forEach((x,j)=>svg.append(sv("text",{x:labW+j*cellW+cellW/2,y:16,class:"ctick","text-anchor":"middle"}, x)));
+    rows.forEach((rl,i)=>{
+      svg.append(sv("text",{x:0,y:headH+i*cellH+cellH/2+4,class:"cl"}, rl));
+      xs.forEach((x,j)=>{
+        const val = c.grid[i][j], X = labW+j*cellW, Y = headH+i*cellH;
+        if(val==null){ svg.append(sv("text",{x:X+cellW/2,y:Y+cellH/2+4,class:"ctick","text-anchor":"middle"},"–")); return; }
+        const pct = Math.round(12 + 80*(val-mn)/(mx-mn||1));
+        const cell = sv("rect",{x:X+1,y:Y+1,width:cellW-2,height:cellH-2,rx:3});
+        cell.style.fill = `color-mix(in oklab, var(--s1) ${pct}%, var(--surface-2))`;
+        svg.append(cell);
+        const tx = sv("text",{x:X+cellW/2,y:Y+cellH/2+4,class:"cv sm","text-anchor":"middle"}, fmtV(c,val));
+        tx.style.fill = pct>55 ? "#fff" : "var(--ink)"; svg.append(tx);
+        hit(cell, [h("div",{class:"tt"}, `${rl} · ${x}`), h("b",{}, fmtV(c,val))]);
+      });
+    });
+  }
+  else if(c.type==="scatter"){
+    const H = 300, m = {l:52,r:20,t:24,b:44}, X0=m.l, X1=W-m.r, Y0=H-m.b, Y1=m.t;
+    const sx = scaleOf(0, Math.max(...c.points.map(p=>p[1]))), sy = scaleOf(0, Math.max(...c.points.map(p=>p[2])));
+    const xOf = v => X0 + (v-sx.lo)/(sx.hi-sx.lo)*(X1-X0), yOf = v => Y0 - (v-sy.lo)/(sy.hi-sy.lo)*(Y0-Y1);
+    svg = sv("svg",{viewBox:`0 0 ${W} ${H}`});
+    yAxis(svg, sy, X0, X1, yOf, c.fmt);
+    for(let v=sx.lo; v<=sx.hi+1e-9; v+=sx.step){ svg.append(sv("line",{x1:xOf(v),x2:xOf(v),y1:Y1,y2:Y0,class:"cgrid"})); svg.append(sv("text",{x:xOf(v),y:Y0+18,class:"ctick","text-anchor":"middle"}, fmtN(c.fmtX,v,0))); }
+    svg.append(sv("text",{x:(X0+X1)/2,y:H-4,class:"cann","text-anchor":"middle"}, c.axes.x[lang] + " →"));
+    svg.append(sv("text",{x:X0-44,y:12,class:"cann"}, "↑ " + c.axes.y[lang]));
+    const n = c.points.length, mxv = c.points.reduce((a,p)=>a+p[1],0)/n, myv = c.points.reduce((a,p)=>a+p[2],0)/n;
+    const b = c.points.reduce((a,p)=>a+(p[1]-mxv)*(p[2]-myv),0) / c.points.reduce((a,p)=>a+(p[1]-mxv)**2,0), a0 = myv - b*mxv;
+    const xa = Math.min(...c.points.map(p=>p[1])), xb = Math.max(...c.points.map(p=>p[1]));
+    svg.append(sv("line",{x1:xOf(xa),y1:yOf(a0+b*xa),x2:xOf(xb),y2:yOf(a0+b*xb),class:"cref"}));
+    svg.append(sv("text",{x:xOf(xa),y:yOf(a0+b*xa)+18,class:"cann"}, lang==="zh"?"趋势线":"trend"));
+    c.points.forEach(([name,x,y,lab])=>{
+      svg.append(sv("circle",{cx:xOf(x),cy:yOf(y),r:5,fill:"var(--s1)",stroke:"var(--surface)","stroke-width":2}));
+      if(lab) svg.append(sv("text",{x:xOf(x)+(xOf(x)>X1-120?-9:9),y:yOf(y)-8,class:"cv sm lbl","text-anchor":xOf(x)>X1-120?"end":"start"}, name));
+      const r = sv("circle",{cx:xOf(x),cy:yOf(y),r:12,fill:"transparent"});
+      hit(r, [h("div",{class:"tt"}, name), h("div",{}, `${c.axes.x[lang]}: `, h("b",{}, fmtN(c.fmtX,x,0))), h("div",{}, `${c.axes.y[lang]}: `, h("b",{}, fmtN(c.fmt,y,0)))]);
+      svg.append(r);
+    });
+  }
+  else {
+    /* vertical charts: line, bar, stacked, hist, waterfall */
+    const long = ["bar","stacked","hist","waterfall"].includes(c.type) && xs.some(x=>x.length>11 && x.includes(" "));
+    const H = 280 + (long?14:0), m = {l:52,r:c.type==="line"?56:12,t:18,b:long?44:30};
+    const X0=m.l, X1=W-m.r, Y0=H-m.b, Y1=m.t, n = xs.length;
+    let sc;
+    if(c.type==="stacked") sc = scaleOf(0, Math.max(...xs.map((_,i)=>c.series.reduce((a,s)=>a+s.values[i],0))));
+    else if(c.type==="waterfall"){ let run=0, hi=0; const tot=new Set(c.totals); c.series[0].values.forEach((v,i)=>{ run = tot.has(i) ? v : run+v; hi=Math.max(hi,run); }); sc = scaleOf(0, hi); }
+    else sc = scaleOf(c.type==="line" ? (c.min ?? 0) : 0, Math.max(...allVals(c).concat(c.ref?[c.ref.value]:[])));
+    const yOf = v => Y0 - (v-sc.lo)/(sc.hi-sc.lo)*(Y0-Y1);
+    svg = sv("svg",{viewBox:`0 0 ${W} ${H}`});
+    yAxis(svg, sc, X0, X1, yOf, c.fmt);
+    const labY = H - (long?22:8);
+    if(c.type==="line"){
+      const xOf = i => X0 + 4 + (n===1?0:(i/(n-1))*(X1-X0-8));
+      const every = n>8 && box.clientWidth && box.clientWidth<520 ? 2 : 1;
+      xs.forEach((lab,i)=>{ if(i%every===0 || i===n-1) svg.append(sv("text",{x:xOf(i),y:labY,class:"ctick","text-anchor":"middle"}, lab)); });
+      if(c.mark){ const x=xOf(c.mark.at); svg.append(sv("line",{x1:x,x2:x,y1:Y1,y2:Y0,class:"cmark"})); svg.append(sv("text",{x:x+6,y:Y1+12,class:"cann"}, c.mark.label[lang])); }
+      if(c.ref){ const y=yOf(c.ref.value); svg.append(sv("line",{x1:X0,x2:X1,y1:y,y2:y,class:"cref"})); svg.append(sv("text",{x:X0+6,y:y-6,class:"cann"}, c.ref.label[lang])); }
+      c.series.forEach((s,k)=>{
+        svg.append(sv("path",{d:s.values.map((v,i)=>`${i?"L":"M"}${xOf(i)},${yOf(v)}`).join(""),fill:"none",stroke:`var(--s${k+1})`,"stroke-width":2,"stroke-linejoin":"round","stroke-linecap":"round"}));
+        const li=n-1; svg.append(sv("circle",{cx:xOf(li),cy:yOf(s.values[li]),r:4,fill:`var(--s${k+1})`,stroke:"var(--surface)","stroke-width":2}));
+        svg.append(sv("text",{x:xOf(li)+8,y:yOf(s.values[li])+4,class:"cv"}, fmtV(c,s.values[li])));
+      });
+      const cross = sv("line",{class:"ccross",y1:Y1,y2:Y0,visibility:"hidden"}); svg.append(cross);
+      const colW = (X1-X0)/(n-1||1);
+      xs.forEach((_,i)=>{
+        const r = sv("rect",{x:xOf(i)-colW/2,y:Y1,width:colW,height:Y0-Y1,fill:"transparent"});
+        r.addEventListener("mousemove",e=>{ cross.setAttribute("x1",xOf(i)); cross.setAttribute("x2",xOf(i)); cross.setAttribute("visibility","visible"); showTip(e,tipRows(i)); });
+        r.addEventListener("mouseleave",()=>{ cross.setAttribute("visibility","hidden"); hideTip(); });
+        svg.append(r);
+      });
+    } else {
+      const gw = (X1-X0)/n;
+      xs.forEach((lab,i)=>xText(svg, X0+i*gw+gw/2, labY, lab));
+      if(c.type==="bar"){
+        const k = c.series.length, gap = 2, bw = Math.min(40, (gw*0.7 - gap*(k-1))/k);
+        xs.forEach((_,i)=>{
+          const gx = X0 + i*gw + (gw - (bw*k + gap*(k-1)))/2;
+          c.series.forEach((s,j)=>{
+            const v=s.values[i], x=gx+j*(bw+gap), y=yOf(v);
+            svg.append(sv("path",{d:roundTop(x,y,bw,Y0-y,4),fill:`var(--s${j+1})`}));
+            if(k<=2) svg.append(sv("text",{x:x+bw/2,y:y-5,class:"cv sm","text-anchor":"middle"}, fmtV(c,v)));
+          });
+        });
+      } else if(c.type==="hist"){
+        const v = c.series[0].values;
+        xs.forEach((_,i)=>{ const x = X0+i*gw+1, y = yOf(v[i]); svg.append(sv("path",{d:roundTop(x,y,gw-2,Y0-y,4),fill:"var(--s1)"})); svg.append(sv("text",{x:x+gw/2-1,y:y-5,class:"cv sm","text-anchor":"middle"}, fmtV(c,v[i]))); });
+      } else if(c.type==="stacked"){
+        const bw = Math.min(56, gw*0.6);
+        xs.forEach((_,i)=>{
+          const x = X0+i*gw+(gw-bw)/2; let base = 0;
+          c.series.forEach((s,j)=>{
+            const top = base + s.values[i], yT = yOf(top), yB = yOf(base), last = j===c.series.length-1;
+            const gapTop = last ? 0 : 2;
+            svg.append(sv("path",{d: last ? roundTop(x,yT,bw,yB-yT,4) : `M${x},${yT+gapTop}H${x+bw}V${yB}H${x}Z`, fill:`var(--s${j+1})`}));
+            base = top;
+          });
+          svg.append(sv("text",{x:x+bw/2,y:yOf(base)-6,class:"cv sm","text-anchor":"middle"}, fmtV(c,base)));
+        });
+      } else if(c.type==="waterfall"){
+        const v = c.series[0].values, tot = new Set(c.totals), bw = Math.min(56, gw*0.62); let run = 0, prevTop = null;
+        xs.forEach((_,i)=>{
+          const x = X0+i*gw+(gw-bw)/2; let a, b, fill;
+          if(tot.has(i)){ a=0; b=v[i]; run=v[i]; fill="var(--s1)"; }
+          else { a=run; b=run+v[i]; run=b; fill = v[i]>=0 ? "var(--s3)" : "var(--s2)"; }
+          const yT = yOf(Math.max(a,b)), yB = yOf(Math.min(a,b));
+          svg.append(sv("path",{d: (tot.has(i)||v[i]>=0) ? roundTop(x,yT,bw,Math.max(yB-yT,2),3) : roundBottom(x,yT,bw,Math.max(yB-yT,2),3), fill}));
+          if(prevTop!=null) svg.append(sv("line",{x1:prevTop.x,x2:x,y1:prevTop.y,y2:prevTop.y,class:"cmark"}));
+          prevTop = {x:x+bw, y:yOf(run)};
+          svg.append(sv("text",{x:x+bw/2,y:yT-6,class:"cv sm","text-anchor":"middle"}, tot.has(i)?fmtV(c,v[i]):fmtS(c,v[i])));
+        });
+      }
+      xs.forEach((lab,i)=>{
+        const r = sv("rect",{x:X0+i*gw,y:Y1,width:gw,height:Y0-Y1,fill:"transparent"});
+        if(c.type==="waterfall"){ const tot=new Set(c.totals); hit(r,[h("div",{class:"tt"},lab), h("b",{}, tot.has(i)?fmtV(c,c.series[0].values[i]):fmtS(c,c.series[0].values[i]))]); }
+        else if(c.type==="stacked") hit(r, [...tipRows(i), h("div",{class:"tt"}, (lang==="zh"?"合计 ":"Total ") + fmtV(c, c.series.reduce((a,s)=>a+s.values[i],0)))]);
+        else hit(r, tipRows(i));
+        svg.append(r);
+      });
+    }
+  }
+  if(svg){ svg.setAttribute("role","img"); svg.setAttribute("aria-label", c.title[lang]); box.append(svg, tip); }
+
+  /* data table */
+  let thead, rowsData;
+  if(c.type==="scatter"){ thead = ["", c.axes.x[lang], c.axes.y[lang]]; rowsData = c.points.map(p=>[p[0], fmtN(c.fmtX,p[1],0), fmtN(c.fmt,p[2],0)]); }
+  else if(c.type==="heatmap"){ thead = ["", ...xs]; rowsData = c.rows[lang].map((r,i)=>[r, ...c.grid[i].map(v=>v==null?"–":fmtV(c,v))]); }
+  else if(c.type==="waterfall"){ const tot=new Set(c.totals); thead=["", c.series[0].name[lang]]; rowsData = xs.map((x,i)=>[x, tot.has(i)?fmtV(c,c.series[0].values[i]):fmtS(c,c.series[0].values[i])]); }
+  else { thead = ["", ...c.series.map(s=>s.name[lang])]; rowsData = xs.map((x,i)=>[x, ...c.series.map(s=>c.type==="diverge"?fmtS(c,s.values[i]):fmtV(c,s.values[i]))]); }
+  const table = h("table",{class:"ctable"}, h("thead",{}, h("tr",{}, thead.map(t=>h("th",{}, t)))), h("tbody",{}, rowsData.map(r=>h("tr",{}, r.map(v=>h("td",{}, v))))));
+  if(ty) fig.append(h("p",{class:"ctip-read"}, h("b",{}, lang==="zh"?"怎么讲这类图：":"How to talk about it: "), ty.tip[lang]));
+  fig.append(h("details",{class:"cdata"}, h("summary",{}, t("showData")), h("div",{class:"tscroll"}, table)));
+}
+
+/* ---------- Claude ---------- */
+let samplePromise = null;
+function getSample(){ if(!samplePromise) samplePromise = (window.claude?.use ? window.claude.use("sample") : Promise.resolve(null)).catch(()=>null); return samplePromise; }
+function errCopy(e){
+  const E = t("err");
+  switch(e?.code){
+    case "not_granted": case "sampling_disabled": case "not_declared": case "capability_disabled": case "capability_removed": return E.off;
+    case "rate_limited": return E.rate;
+    case "session_expired": return E.sign;
+    case "invalid_json": return E.json;
+    case "refused": return E.refused;
+    default: return E.other;
+  }
+}
+
+const GUIDE_SHAPE = `{"topic":"the exact question to answer out loud, one sentence","context":"who they speak to and the setting, one short line","framework":"short framework name","why":"why this framework fits, very short","steps":[{"label":"short step name","prompt":"a guiding question written for THIS situation","phrases":["useful expression for this step","...","..."]}]}`;
+const FW_MENU = `PREP (point-reason-example-point, for opinions), STAR (situation-task-action-result, for stories about something they did), Problem-Solution-Benefit-Next step (for requests, proposals, pushing back), Past-Present-Future (for introductions and changes), What-So what-Now what (for reflection or explaining what happened), or a custom 3-5 step framework when none fits (e.g. small talk: Open-Ask-Share-Bridge; a toast: Hook-Story-Wish)`;
+
+async function buildGuide(scenario){
+  const en = L()==="en";
+  const coach = en
+    ? `You are a speaking coach for a Chinese-native professional who wants to speak English with clear structure. Write EVERYTHING in natural spoken English (no Chinese at all).`
+    : `你是一位中文表达教练，帮助一位职场人士在中文口头表达中做到有条理、有重点、得体。所有内容都用中文写。框架名用中文（例如“观点·理由·例子·重申”）。`;
+  const task = `The learner described a real situation they will face (may be written in either language):\n"""${scenario}"""\nTurn it into ONE speaking task to rehearse. Choose the best-fitting framework: ${FW_MENU}.`;
+  const prompt = `${coach}\n${task}\nRules: 3-5 steps. For each step give 2-3 expressions a skilled speaker would really use at that point in this situation (natural, not textbook; use "…" where content goes). Keep prompts short.\nReply with only JSON in this shape:\n${GUIDE_SHAPE}`;
+  const sample = await getSample();
+  if(!sample) throw {code:"not_granted"};
+  const g = await sample.json(prompt, {cache:false});
+  if(!g || !Array.isArray(g.steps) || !g.steps.length || !g.topic) throw {code:"invalid_json"};
+  return {source:"free", topic:String(g.topic), context:String(g.context||""), framework:String(g.framework||""), why:String(g.why||""),
+    steps:g.steps.slice(0,6).map(s=>({label:String(s.label||""),prompt:String(s.prompt||""),phrases:(Array.isArray(s.phrases)?s.phrases:[]).slice(0,4).map(String)})),
+    phrases:(Array.isArray(g.phrases)?g.phrases:[]).slice(0,8).map(p=>({text:String(p.text||""),note:String(p.note||"")}))};
+}
+
+async function getFeedback(){
+  const g = S().guide, en = L()==="en";
+  const body = g.steps.map((s,i)=>`[${s.label}] ${S().answers[i]||"(empty)"}`).join("\n");
+  const chartNote = g.chart ? (en
+    ? `The learner is presenting this chart:\n${chartText(g.chart,"en")}\nCheck every number and trend they state against the data and correct misreadings in "fixes". Reward leading with the takeaway, rounding sensibly, and comparing instead of listing. Also judge whether they described it the way this chart type is best read: ${CHART_TYPES[g.chart.type]?.tip.en||""} In "vocab" favour data-reporting language (trend verbs, comparisons, approximations, cause and effect).\n`
+    : `学习者在汇报这张图表：\n${chartText(g.chart,"zh")}\n请逐一核对他提到的数字和趋势，读错的在 "fixes" 中指出。鼓励结论先行、合理取整、用对比代替罗列。同时评价他是否用了这类图表的正确讲法：${CHART_TYPES[g.chart.type]?.tip.zh||""}"vocab" 优先给数据汇报用语（趋势动词、比较、约数、因果）。\n`) : "";
+  const head = `${chartNote}Task: ${g.topic}\n${g.context?"Setting: "+g.context+"\n":""}Framework: ${g.framework} (${g.steps.map(s=>s.label).join(" → ")})\nTheir answer, by step:\n${body}\n`;
+  const prompt = en ? `You are a warm but exacting English speaking coach for a Chinese-native professional. Write all feedback in clear, simple English (no Chinese except when quoting them). Parts of their answer may be in Chinese where they didn't know the English; treat those as "how do I say this" requests.
+
+${head}
+Scores are 1-5 integers: structure (each step does its job and flows), clarity (easy to follow when heard once), vocabulary (range and precision), naturalness (sounds like spoken English, not translated).
+"fixes": up to 5 most useful corrections: quote their exact words in "original", a natural spoken alternative in "better", a short reason in "why".
+"translations": each Chinese fragment they wrote ("from") with a natural English way to say it ("to"); empty array if none.
+"polished": their answer rewritten as one natural spoken paragraph, keeping their ideas and details, in framework order, 90-160 words. Wrap 4-6 upgraded words or phrases in **double asterisks**.
+"speech": the SAME polished text split into sentences, marked for reading aloud: put "‿" between words whose sounds link in connected speech (consonant-to-vowel like "pick‿it‿up", same consonant like "big‿game", and common reductions like "want‿to"), put " / " at natural short pauses inside a sentence, and wrap the 1-3 most stressed words of each sentence in *single asterisks*. No double asterisks here.
+"vocab": 5 words or phrases worth learning, with part of speech (or "phrase"), a short plain-English "meaning", and an example sentence tied to their situation.
+"next": one concrete thing to focus on next time.
+Reply with only JSON:
+{"scores":{"structure":0,"clarity":0,"vocabulary":0,"naturalness":0},"summary":"","strengths":[""],"fixes":[{"original":"","better":"","why":""}],"translations":[{"from":"","to":""}],"polished":"","speech":["I've *been* work‿ing on‿it / for‿a *while*."],"vocab":[{"word":"","pos":"","meaning":"","example":""}],"next":""}`
+  : `你是一位温和但要求严格的中文表达教练，帮助职场人士把话说得有条理、有重点、得体、自然。全部用中文反馈。
+
+${head}
+评分为 1-5 的整数：structure（每一步是否完成其作用、衔接是否顺畅），clarity（听一遍能否听懂重点），vocabulary（用词是否准确、丰富、有表现力），naturalness（是否像自然口语，而不是书面腔或翻译腔）。
+"fixes"：最多 5 条最有价值的修改，"original" 原样引用他写的句子，"better" 给出更好的说法，"why" 简短说明原因（如啰嗦、口头禅、逻辑跳跃、用词不准、语气不得体）。
+"translations"：他夹杂的英文词（from）及地道的中文说法（to）；没有则为空数组。
+"polished"：把他的回答改写成一段自然、有感染力的口语，保留他的观点和细节，按框架顺序，150-280 字。用 **双星号** 标出 4-6 个升级后的好词或好句。
+"speech"：把同一段示范回答按句拆开，作为朗读稿：在句内自然停顿处加 " / "，每句中最需要重读的 1-3 个词用 *单星号* 标出。这里不要用双星号。
+"vocab"：5 个值得积累的好词、成语或句式，"pos" 写词性或“成语”“句式”，"meaning" 写简短释义，"example" 给一个贴合他场景的例句。
+"next"：下次练习最该注意的一点。
+只回复 JSON：
+{"scores":{"structure":0,"clarity":0,"vocabulary":0,"naturalness":0},"summary":"","strengths":[""],"fixes":[{"original":"","better":"","why":""}],"translations":[{"from":"","to":""}],"polished":"","speech":["我觉得 / 这件事 *最关键* 的是……"],"vocab":[{"word":"","pos":"","meaning":"","example":""}],"next":""}`;
+  const sample = await getSample();
+  if(!sample) throw {code:"not_granted"};
+  return sample.json(prompt, {cache:false});
+}
+
+/* ---------- speech ---------- */
+let rate = LS.get("fs.rate", 1);
+let playToken = 0;
+const plain = s => String(s).replace(/‿/g," ").replace(/\s\/\s?/g,", ").replace(/\*+/g,"").replace(/\s+/g," ").replace(/,\s*([,.!?。，！？])/g,"$1").trim();
+function pickVoice(lang){
+  try{
+    const vs = speechSynthesis.getVoices(); const want = lang==="zh" ? /^zh(-|_)?(CN|Hans)?/i : /^en(-|_)US/i;
+    const pool = vs.filter(v=>want.test(v.lang)); const fallback = vs.filter(v=>v.lang.toLowerCase().startsWith(lang));
+    const list = pool.length ? pool : fallback;
+    return list.find(v=>/Samantha|Ava|Allison|Google US|Tingting|Meijia|Google 普通话/i.test(v.name)) || list.find(v=>v.localService) || list[0] || null;
+  }catch(e){ return null; }
+}
+try{ speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged = ()=>{}; }catch(e){}
+function stopSpeech(){ playToken++; try{ speechSynthesis.cancel(); }catch(e){} document.querySelectorAll(".sent.playing").forEach(x=>x.classList.remove("playing")); const pa=$("playAllBtn"); if(pa) pa.textContent=t("playAll"); }
+function sayOne(text, lang){
+  return new Promise(res=>{
+    try{
+      const u = new SpeechSynthesisUtterance(text); u.lang = lang==="zh"?"zh-CN":"en-US"; u.rate = rate;
+      const v = pickVoice(lang); if(v) u.voice = v;
+      u.onend = res; u.onerror = res; speechSynthesis.speak(u);
+    }catch(e){ res(); }
+  });
+}
+async function playSentences(rows, from, to){
+  stopSpeech(); const my = ++playToken; const lang = L();
+  if(to-from>1){ const pa=$("playAllBtn"); if(pa) pa.textContent=t("stop"); }
+  for(let i=from;i<to;i++){
+    if(my!==playToken) return;
+    rows[i].el.classList.add("playing");
+    await sayOne(rows[i].text, lang);
+    rows[i].el.classList.remove("playing");
+  }
+  if(my===playToken){ const pa=$("playAllBtn"); if(pa) pa.textContent=t("playAll"); }
+}
+function markedNode(s){
+  const span = h("span",{class:"txt"});
+  String(s).split(/(\*[^*]+\*|‿|\s\/\s?)/g).forEach(part=>{
+    if(!part) return;
+    if(part==="‿") span.append(h("span",{class:"lk","aria-hidden":"true"},"‿"));
+    else if(/^\s\/\s?$/.test(part)) span.append(h("span",{class:"ps","aria-hidden":"true"}," / "));
+    else if(/^\*[^*]+\*$/.test(part)) span.append(h("strong",{class:"st"}, part.slice(1,-1)));
+    else span.append(part);
+  });
+  return span;
+}
+
+/* ---------- feedback ---------- */
+function renderFeedback(f){
+  const p = $("fbPanel"); p.hidden=false; p.replaceChildren();
+  const sc = f.scores||{}; const keys = ["structure","clarity","vocabulary","naturalness"];
+  p.append(h("div",{class:"row between"}, h("h2",{style:"font-size:22px"}, t("feedback")), h("span",{class:"label"}, S().guide.framework)));
+  p.append(h("div",{class:"scores"}, keys.map((k,i)=>{
+    const v = Math.max(0,Math.min(5,Number(sc[k])||0));
+    return h("div",{class:"score"}, h("div",{class:"label"}, t("dims")[i]), h("div",{class:"v"}, v, h("small",{}," / 5")), h("div",{class:"bar"}, h("i",{style:`width:${v*20}%`})));
+  })));
+  if(f.summary) p.append(h("p",{style:"margin:0"}, f.summary));
+
+  const strengths = (f.strengths||[]).map(s=>typeof s==="string"?s:(s.en||s.text||"")).filter(Boolean);
+  if(strengths.length) p.append(h("div",{class:"fb-sec"}, h("h3",{}, t("worked")), h("ul",{class:"clean"}, strengths.map(s=>h("li",{}, "✓ ", s)))));
+
+  if(f.fixes?.length) p.append(h("div",{class:"fb-sec"}, h("h3",{}, t("better")),
+    h("ul",{class:"clean"}, f.fixes.map(x=>h("li",{class:"fix"}, h("span",{class:"old"}, x.original), h("span",{class:"new"}, "→ ", x.better), x.why?h("small",{}, x.why):null)))));
+
+  if(f.translations?.length) p.append(h("div",{class:"fb-sec"}, h("h3",{}, t("translations")),
+    h("ul",{class:"clean"}, f.translations.map(x=>h("li",{class:"fix"}, h("span",{}, x.from), h("span",{class:"new"}, "→ ", x.to))))));
+
+  if(f.polished){
+    const pol = h("div",{class:"polished"});
+    String(f.polished).split(/\*\*(.+?)\*\*/g).forEach((part,i)=> pol.append(i%2? h("mark",{},part) : part));
+    p.append(h("div",{class:"fb-sec"}, h("h3",{}, t("polished")), pol));
+  }
+
+  const speech = (Array.isArray(f.speech)?f.speech:[]).map(String).filter(s=>s.trim());
+  if(speech.length){
+    const canSpeak = "speechSynthesis" in window;
+    const rows = []; const script = h("div",{class:"script"});
+    speech.forEach((s,i)=>{
+      const btn = h("button",{class:"play",type:"button","aria-label":`${t("listen")} ${i+1}`, disabled:!canSpeak},"▶");
+      const el = h("div",{class:"sent"}, btn, markedNode(s));
+      rows.push({el, text:plain(s)});
+      btn.onclick = ()=>playSentences(rows, i, i+1);
+      script.append(el);
+    });
+    const playAll = h("button",{class:"btn primary",type:"button",id:"playAllBtn",disabled:!canSpeak}, t("playAll"));
+    playAll.onclick = ()=>{ if(playAll.textContent===t("stop")) stopSpeech(); else playSentences(rows, 0, rows.length); };
+    const speedSeg = h("div",{class:"seg sm",role:"group","aria-label":t("speed")});
+    [0.75,0.9,1].forEach(r=>{
+      const b = h("button",{type:"button","aria-pressed":String(rate===r)}, r+"×");
+      b.onclick = ()=>{ rate=r; LS.set("fs.rate",r); speedSeg.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed", String(x===b))); };
+      speedSeg.append(b);
+    });
+    p.append(h("div",{class:"fb-sec"},
+      h("div",{class:"row between"}, h("h3",{}, t("readAloud")), h("div",{class:"row"}, h("span",{class:"label"}, t("speed")), speedSeg, playAll)),
+      h("div",{class:"legend"}, t("legend").map(([sym,desc])=>h("span",{}, sym==="‿"?h("b",{style:"color:var(--link)"},"‿"):sym==="/"?h("b",{},"/"):h("strong",{class:"st"},sym), " ", desc))),
+      script,
+      h("div",{class:"note"}, canSpeak ? t("shadow") : t("noVoice"))));
+  }
+
+  if(f.vocab?.length){
+    const have = new Set(notebook.filter(w=>w.lang===L()).map(w=>String(w.word).toLowerCase()));
+    p.append(h("div",{class:"fb-sec"}, h("h3",{}, t("words")),
+      h("div",{class:"vocab"}, f.vocab.map(v=>{
+        const got = have.has(String(v.word).toLowerCase());
+        const add = h("button",{type:"button",disabled:got}, got ? t("inNb") : t("add"));
+        add.onclick = async ()=>{ add.disabled=true; add.textContent=t("inNb"); await addWord(v); };
+        const lis = h("button",{type:"button"}, "▶ "+t("listen"));
+        lis.onclick = ()=>{ stopSpeech(); sayOne(`${v.word}. ${v.example||""}`, L()); };
+        return h("div",{class:"word"}, h("div",{class:"w"}, v.word, " ", h("span",{class:"label"}, v.pos||"")),
+          h("div",{class:"m"}, v.meaning||v.zh||""), h("div",{class:"ex"}, v.example||""),
+          h("div",{class:"acts"}, "speechSynthesis" in window ? lis : null, add));
+      }))));
+  }
+  if(f.next) p.append(h("div",{class:"fb-sec"}, h("h3",{}, t("next")), h("p",{style:"margin:0"}, f.next)));
+}
+
+/* ---------- notebook + history (db, with this browser as fallback) ---------- */
+let db = null, notebook = LS.get("fs.words2", []), sessLog = LS.get("fs.sessions2", []);
+function renderNotebook(){
+  const mine = notebook.filter(w=>w.lang===L());
+  $("nbCount").textContent = mine.length;
+  const l = $("nbList"); l.replaceChildren();
+  if(!mine.length){ l.append(h("p",{class:"note",style:"margin:0"}, t("nbEmpty"))); return; }
+  mine.forEach(w=>{
+    const x = h("button",{class:"x",type:"button"}, t("remove"));
+    x.onclick = ()=>removeWord(w);
+    l.append(h("div",{class:"nb-item"},
+      h("div",{}, h("b",{}, w.word), " ", h("span",{class:"label"}, w.pos||""), h("div",{}, w.meaning||""), h("div",{class:"note",style:"font-style:italic"}, w.example||"")), x));
+  });
+}
+function renderHistory(){
+  const mine = sessLog.filter(s=>s.lang===L());
+  $("histCount").textContent = mine.length;
+  const l = $("histList"); l.replaceChildren();
+  if(!mine.length){ l.append(h("p",{class:"note",style:"margin:0"}, t("histEmpty"))); return; }
+  mine.slice(0,15).forEach(s=>{
+    const d = new Date(s.at);
+    l.append(h("div",{class:"hist"}, h("span",{class:"d"}, `${d.getMonth()+1}/${d.getDate()}`), h("span",{}, s.topic, " ", h("span",{class:"label"}, s.framework)), h("b",{style:"font-variant-numeric:tabular-nums"}, Number(s.avg||0).toFixed(1))));
+  });
+}
+async function addWord(v){
+  const item = {lang:L(), word:String(v.word), pos:String(v.pos||""), meaning:String(v.meaning||""), example:String(v.example||""), topic:S().guide.topic, at:Date.now()};
+  if(db){ try{ const ref = await db.collection("words").add(item); item.id = ref.id; }catch(e){} }
+  notebook = [item, ...notebook]; LS.set("fs.words2", notebook); renderNotebook();
+}
+async function removeWord(w){
+  notebook = notebook.filter(x=>x!==w); LS.set("fs.words2", notebook); renderNotebook();
+  if(db && w.id){ try{ await db.doc("words/"+w.id).delete(); }catch(e){} }
+}
+async function logSession(f, lang){ const sec=app.sec[lang];
+  const sc=f.scores||{}; const vals=["structure","clarity","vocabulary","naturalness"].map(k=>Number(sc[k])||0);
+  const g=sec.guide;
+  const item = {lang, topic:g.topic, framework:g.framework, scores:sc, avg:vals.reduce((a,b)=>a+b,0)/4,
+    answers:g.steps.map((s,i)=>({step:s.label, text:sec.answers[i]||""})), polished:String(f.polished||""), at:Date.now()};
+  sessLog = [item, ...sessLog].slice(0,200); LS.set("fs.sessions2", sessLog); renderHistory();
+  if(db){ try{ await db.collection("sessions").add(item); }catch(e){} }
+}
+async function initDb(){
+  try{ db = window.claude?.use ? await window.claude.use("db") : null; }catch(e){ db=null; }
+  if(!db) return;
+  try{
+    const ws = await db.collection("words").orderBy("at","desc").limit(500).get();
+    if(!ws.empty){ notebook = ws.docs.map(d=>{ const x={...d.data(), id:d.id}; if(!x.lang) x.lang="en"; if(!x.meaning&&x.zh) x.meaning=x.zh; return x; }); LS.set("fs.words2", notebook); renderNotebook(); }
+    const ss = await db.collection("sessions").orderBy("at","desc").limit(100).get();
+    if(!ss.empty){ sessLog = ss.docs.map(d=>{ const x={...d.data()}; if(!x.lang) x.lang="en"; if(!x.topic) x.topic=x.topic_en||""; return x; }); LS.set("fs.sessions2", sessLog); renderHistory(); }
+  }catch(e){}
+}
+
+/* ---------- wiring ---------- */
+$("langZh").onclick=()=>{ if(L()!=="zh"){ app.lang="zh"; persist(); renderAll(); } };
+$("langEn").onclick=()=>{ if(L()!=="en"){ app.lang="en"; persist(); renderAll(); } };
+$("modeDraw").onclick=()=>{app.mode="draw";persist();renderChrome();};
+$("modeFree").onclick=()=>{app.mode="free";persist();renderChrome();$("scenario").focus();};
+function chartPool(kind){ return DECK.chart.map((r,i)=>i).filter(i=>!kind || kind==="all" || DECK.chart[i][3].type===kind); }
+function draw(deck){
+  const s=S();
+  const pool = deck==="chart" ? chartPool(s.chartKind) : DECK[deck].map((_,i)=>i);
+  let i, tries=0;
+  do{ i = pool[Math.floor(Math.random()*pool.length)]; }while(pool.length>1 && deck===s.deck && i===s.idx && ++tries<20);
+  s.deck=deck; s.idx=i; setGuide(guideFromDeck(L(),deck,i));
+}
+function renderTypeChips(){
+  const s=S(); $("typeRow").hidden = s.deck!=="chart";
+  if(s.deck!=="chart") return;
+  const kind = s.chartKind||"all", lang=L();
+  const mk = (k, label, sub) => { const b = h("button",{class:"tchip",type:"button","aria-pressed":String(kind===k)}, h("b",{},label), sub?h("small",{},sub):null); b.onclick=()=>{ s.chartKind=k; draw("chart"); }; return b; };
+  $("typeChips").replaceChildren(mk("all", t("allTypes"), lang==="zh"?"随机":"Surprise me"), ...CHART_ORDER.map(k=>mk(k, CHART_TYPES[k][lang], CHART_TYPES[k].cat[lang])));
+}
+$("deckLife").onclick=()=>draw("life");
+$("deckWork").onclick=()=>draw("work");
+$("deckChart").onclick=()=>draw("chart");
+$("drawBtn").onclick=()=>draw(S().deck);
+$("scenario").addEventListener("input",e=>{S().scenario=e.target.value;persist();});
+
+async function runGuide(btn, statusEl, scenario){
+  btn.disabled=true; setStatus(statusEl, t("writingGuide"), "busy");
+  try{ const g = await buildGuide(scenario); setGuide(g); $("topicPanel").scrollIntoView({behavior:"smooth",block:"start"}); }
+  catch(e){ setStatus(statusEl, errCopy(e), "err"); }
+  finally{ btn.disabled=false; }
+}
+$("buildBtn").onclick=()=>{
+  const s=$("scenario").value.trim();
+  if(!s){ setStatus($("buildStatus"), t("needScenario"), "err"); return; }
+  runGuide($("buildBtn"), $("buildStatus"), s);
+};
+$("clearBtn").onclick=()=>{ S().answers = S().answers.map(()=>""); persist(); renderGuide(); };
+$("feedbackBtn").onclick=async()=>{
+  const filled = S().answers.filter(a=>(a||"").trim()).length;
+  if(!filled){ setStatus($("fbStatus"), t("needAnswer"), "err"); return; }
+  const btn=$("feedbackBtn"); btn.disabled=true; setStatus($("fbStatus"), t("reviewing"), "busy");
+  const lang = L();
+  try{
+    const f = await getFeedback();
+    if(!f || typeof f!=="object") throw {code:"invalid_json"};
+    app.sec[lang].feedback=f; persist();
+    if(L()===lang){ renderFeedback(f); setStatus($("fbStatus"),""); $("fbPanel").scrollIntoView({behavior:"smooth",block:"start"}); }
+    logSession(f, lang);
+  }catch(e){ if(L()===lang) setStatus($("fbStatus"), errCopy(e), "err"); }
+  finally{ btn.disabled=false; }
+};
+
+/* ---------- boot ---------- */
+renderAll();
+initDb();
+</script>
