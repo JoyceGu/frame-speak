@@ -305,7 +305,7 @@ const T = {
     describe:"Describe the situation you're about to face", scenarioPh:"e.g. Next week I'm asking my manager for a raise. Last year I led two big launches…",
     build:"Build my guide", phrases:"Phrases for this topic", sayIt:"Read it through, then say it out loud once.",
     stuck:"Stuck on a word? Write it in Chinese and the feedback will give you the English.", clear:"Clear", getFb:"Get feedback",
-    notebook:"Word notebook", history:"Recent practice", aiNote:"Feedback and custom-situation guides are written by Claude on your account. Built-in topics and frameworks work without it.",
+    notebook:"Word notebook", history:"Recent practice", aiNote:"Feedback and custom-situation guides are written by Claude on your account. Built-in topics and frameworks work without it. Your word notebook and practice history stay in this browser only.",
     writingGuide:"Writing your guide… usually 10–30 seconds", reviewing:"Reviewing your answer… usually 15–40 seconds",
     needScenario:"Describe the situation first, even one line.", needAnswer:"Fill in at least one step first.",
     feedback:"Feedback", dims:["Structure","Clarity","Vocabulary","Naturalness"], worked:"What worked", better:"Say it better",
@@ -323,7 +323,7 @@ const T = {
     describe:"描述你即将面对的场景", scenarioPh:"例：下周要在部门会上汇报项目进展，其中一个模块延期了…",
     build:"生成向导", phrases:"本题可用表达", sayIt:"写完通读一遍，再完整地说出来。",
     stuck:"不用追求完美，先把意思写下来，反馈会帮你打磨。", clear:"清空", getFb:"获取反馈",
-    notebook:"好词好句本", history:"练习记录", aiNote:"反馈和自由场景向导由 Claude 生成，计入你的 Claude 用量。内置题库和框架无需调用。",
+    notebook:"好词好句本", history:"练习记录", aiNote:"反馈和自由场景向导由 Claude 生成，计入你的 Claude 用量。内置题库和框架无需调用。好词好句本和练习记录只保存在你自己的浏览器里。",
     writingGuide:"正在生成向导…通常需要 10–30 秒", reviewing:"正在点评…通常需要 15–40 秒",
     needScenario:"请先写一句场景描述。", needAnswer:"请至少先写一步。",
     feedback:"反馈", dims:["结构","清晰","用词","自然"], worked:"做得好的", better:"更好的说法",
@@ -1239,8 +1239,8 @@ function renderFeedback(f){
   if(f.next) p.append(h("div",{class:"fb-sec"}, h("h3",{}, t("next")), h("p",{style:"margin:0"}, f.next)));
 }
 
-/* ---------- notebook + history (db, with this browser as fallback) ---------- */
-let db = null, notebook = LS.get("fs.words2", []), sessLog = LS.get("fs.sessions2", []);
+/* ---------- notebook + history: kept only in this browser, so each person has their own ---------- */
+let notebook = LS.get("fs.words2", []), sessLog = LS.get("fs.sessions2", []);
 function renderNotebook(){
   const mine = notebook.filter(w=>w.lang===L());
   $("nbCount").textContent = mine.length;
@@ -1263,32 +1263,19 @@ function renderHistory(){
     l.append(h("div",{class:"hist"}, h("span",{class:"d"}, `${d.getMonth()+1}/${d.getDate()}`), h("span",{}, s.topic, " ", h("span",{class:"label"}, s.framework)), h("b",{style:"font-variant-numeric:tabular-nums"}, Number(s.avg||0).toFixed(1))));
   });
 }
-async function addWord(v){
+function addWord(v){
   const item = {lang:L(), word:String(v.word), pos:String(v.pos||""), meaning:String(v.meaning||""), example:String(v.example||""), topic:S().guide.topic, at:Date.now()};
-  if(db){ try{ const ref = await db.collection("words").add(item); item.id = ref.id; }catch(e){} }
   notebook = [item, ...notebook]; LS.set("fs.words2", notebook); renderNotebook();
 }
-async function removeWord(w){
+function removeWord(w){
   notebook = notebook.filter(x=>x!==w); LS.set("fs.words2", notebook); renderNotebook();
-  if(db && w.id){ try{ await db.doc("words/"+w.id).delete(); }catch(e){} }
 }
-async function logSession(f, lang){ const sec=app.sec[lang];
+function logSession(f, lang){ const sec=app.sec[lang];
   const sc=f.scores||{}; const vals=["structure","clarity","vocabulary","naturalness"].map(k=>Number(sc[k])||0);
   const g=sec.guide;
   const item = {lang, topic:g.topic, framework:g.framework, scores:sc, avg:vals.reduce((a,b)=>a+b,0)/4,
     answers:g.steps.map((s,i)=>({step:s.label, text:sec.answers[i]||""})), polished:String(f.polished||""), at:Date.now()};
   sessLog = [item, ...sessLog].slice(0,200); LS.set("fs.sessions2", sessLog); renderHistory();
-  if(db){ try{ await db.collection("sessions").add(item); }catch(e){} }
-}
-async function initDb(){
-  try{ db = window.claude?.use ? await window.claude.use("db") : null; }catch(e){ db=null; }
-  if(!db) return;
-  try{
-    const ws = await db.collection("words").orderBy("at","desc").limit(500).get();
-    if(!ws.empty){ notebook = ws.docs.map(d=>{ const x={...d.data(), id:d.id}; if(!x.lang) x.lang="en"; if(!x.meaning&&x.zh) x.meaning=x.zh; return x; }); LS.set("fs.words2", notebook); renderNotebook(); }
-    const ss = await db.collection("sessions").orderBy("at","desc").limit(100).get();
-    if(!ss.empty){ sessLog = ss.docs.map(d=>{ const x={...d.data()}; if(!x.lang) x.lang="en"; if(!x.topic) x.topic=x.topic_en||""; return x; }); LS.set("fs.sessions2", sessLog); renderHistory(); }
-  }catch(e){}
 }
 
 /* ---------- wiring ---------- */
@@ -1346,5 +1333,4 @@ $("feedbackBtn").onclick=async()=>{
 
 /* ---------- boot ---------- */
 renderAll();
-initDb();
 </script>

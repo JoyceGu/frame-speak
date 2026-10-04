@@ -17,9 +17,9 @@ A bilingual (中文 / English) speaking-practice coach: draw a topic or describe
 
 一个单文件网页。作为 Claude Artifact 发布时，向导和反馈由打开页面的人自己的 Claude 账户生成；直接用浏览器打开时，题库、框架和图表可用，AI 功能不可用。
 
-To run it as a Claude Artifact, ask Claude to publish `index.html` as an artifact with the `sample` and `db` capabilities.
+To run it as a Claude Artifact, ask Claude to publish `index.html` as an artifact with the `sample` capability.
 
-> 注意：生词本和练习记录存在 Artifact 的共享数据库里，能打开同一个页面的人看到的是同一份。分享给别人之前，建议改成只存在各自浏览器里。
+好词好句本和练习记录只保存在每个人自己的浏览器里（localStorage），互不可见；换浏览器或清除网站数据后会清空。
 
 ### 2. MCP 服务器 · `mcp/`
 
